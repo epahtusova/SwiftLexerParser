@@ -1,0 +1,141 @@
+# SwiftLexerParser
+Study project for Compilers Construction course in Innopolis University Fall 2018
+
+
+Subset of Swift grammar in BNF notation:
+<translation-unit> ::= <statement>*
+<statement> ::= ';'
+            | <new-type-defn>
+            | <global-const-defn>
+            | <import-stmt>
+            | <pragma-stmt> (program statement)
+            | <func-defn>
+            | <block>
+            | <if-stmt>
+            | <switch-stmt>
+            | <wait-stmt>
+            | <foreach-loop>
+            | <for-loop>
+            | <iterate-loop>
+            | <stmt-chain>
+            | <update-stmt>
+<new-type-defn> ::= 'type' <type-name> '{' (<var-decl> ';') * '}' (new struct or subtype)
+                | 'type' <type-name> <standalone-type> ';'
+                | 'typedef' <type-name> <standalone-type> ';'
+<global-const-defn> ::= 'global' 'const' <var-decl> ';'
+<import-stmt> ::= 'import' <module-path> ';'
+              | 'import' <string-literal> ';'
+<module-path> ::= <id> ('.' <id>)>
+<pragma-stmt> ::= 'pragma' <id> <expr> > ';'
+<func-defn> ::= <swift-func-defn>
+            | <app-func-defn>
+            | <foreign-func-defn>
+<func-hdr> ::= <type-params>? <formal-arg-list>? <func-name> <formal-arg-list>?
+<type-params> ::= '<' <var-name> (',' <var-name>) * '>'
+<formal-arg-list> ::= '(' (<formal-arg> (',' <formal-arg>)*)? ')'
+<formal-arg> ::= <type-prefix> '...'? <var-name> <type-su°x> ('=' <expr>)?
+<swift-func-defn> ::= <annotation> * <func-hdr> <block>
+<app-func-defn> ::= <annotation> * 'app' <func-hdr> '{' <app-body> '}'
+<app-body> ::= <app-arg-expr> + ('@'('stdin' | 'stdout' | 'stderr') '=' <expr>) * ';'?
+<foreign-func-defn> ::= <annotation> * <func-hdr> <foreign-func-body>
+<foreign-func-body> ::= <string-literal> <string-literal> <string-literal>? ('[' <string-literal> | <multiline-string-literal>']')?
+<var-decl> ::= <type-prefix> <var-decl-rest> (',' <var-decl-rest>)*
+<var-decl-rest> ::= <var-name> <type-suffix> <var-mapping>? ('=' <expr>)?
+<type-preffix> ::= <type-name>
+                | <param-type>
+<param-type> ::= <type-name> '<' <standalone-type> '>'
+<type-suffix> ::= ('[' <standalone-type>? ']')*
+<standalone-type> ::= <type-prefix> <type-suffix>
+<var-mapping> ::= '<' <expr> '>'
+<block> ::= '{' <statement> * '}'
+<stmt-chain> ::= <chainable-stmt> (';' | '=' '>' <statement>)
+<chainable-stmt> ::= <var-name>
+                  | <func-call>
+                  | <var-decl>
+                  | <assignment>
+<assignment> ::= (<lval-list>
+              | '(' <lval-list> ')') ('=' | '+=') <expr-list>
+<update-stmt> ::= <var-name> '<' <id> '>' ':=' <expr> ';'
+<if-stmt> ::= 'if' '(' <expr> ')' <block> ('else' <block>)?
+<switch-stmt> ::= 'switch' '(' <expr> ')' '{' <case> * <default>? '}'
+<case> ::= 'case' <int-literal> ':' <statement>*
+<default> ::= 'default' ':' <statement>*
+<wait-stmt> ::= 'wait' 'deep'? '(' <expr-list> ')' <block>
+<foreach-loop> ::= <annotation> * 'foreach' <var-name> (',' <var-name>)? 'in' <expr> <block>
+<for-loop> ::= <annotation> * 'for' '(' <for-init-list> ';' <expr> <;> <for-update-list> ')' <block>
+<for-init-list> ::= <for-init> (','<for-init>)*
+<for-init> ::= <for-assignment>
+            | <type-prefix> <var-name> <type-suffix> '=' <expr>
+<for-update-list> ::= <for-assignment> (','<for-assignment>)*
+<for-assignment> ::= <var-name> '=' <expr>
+<iterate-loop> ::= 'iterate' <var-name> <block> 'until' '(' <expr> ')'
+<id> ::= (<alpha> | '_') (<alpha> | '_'<digit>)*
+<string-literal> ::= '"' ('\' . | ^'"') * '"'
+<multiline-string-literal> ::= '----\n' .? * '----' | '"""\n' .? * '"""'
+<int-literal> ::= [<digit>]> | '0x'([<digit>] | ['a'..'f'] | ['A'..'F'])*
+<decimal> ::= <digit> + '.' <digit>+
+<sci-decimal> ::= <digit> + ('.' <digit>+)? ('e' | 'E') '-'? <digit>+
+<digit> ::= '0'..'9'
+<alpha> ::= ['a'..'z'] | ['A'..'Z']
+<line-comment> ::= ('//' | '#') (^'\n') ∗ '\n'
+<multi-line-comment> ::= '/*' .? * '*/'
+<expr> ::= <or-expr>
+<or-expr> ::= <and-expr>
+            | <or-expr> '||' <and-expr>
+<and-expr> ::= <eq-expr>
+            | <and-expr> '&&' <eq-expr>
+<eq-expr> ::= <cmp-expr>
+            | <eq-expr> ('==' | '!=') <eq-expr>
+<cmp-expr> ::= <add-expr>
+            | <cmp-expr> ('<' | '<=' | '>' | '>=') <add-expr>
+<add-expr> ::= <mult-expr>
+            | <add-expr> ('+' | '-') <mult-expr>
+<mult-expr> ::= <pow-expr>
+             | <mult-expr> ('*' | '/' | '%/' | '%%' | '%') <pow-expr>
+<unary-expr> ::= <unary-expr>
+              | <pow-expr> '**' <unary-expr>
+<unary-expr> ::= <postfix-expr>
+              | ('-' | '!') <postfix-expr>
+<postfix-expr> ::= <base-expr>
+                | <postfix-expr>(<array-subscript> | <struct-subscript>)
+<array-subscript> ::= '[' <expr> ']'
+<struct-subscript> ::= '.' <id>
+<base-expr> ::= <literal>
+             | <func-call>
+             | <var-name>
+             | '(' <expr> ')'
+             | <tuple-constructor>
+             | <array-constructor>
+<func-call> ::= <annotation>* <func-name> '(' <func-call-arg-list> ')'
+<func-call-arg-list> ::= (<expr> | <kw-expr>) (',' (<expr> | <kw-expr>))*
+<tuple-constructor> ::= '(' <expr> (',' <expr>) + ')'
+<array-constructor> ::= <array-list-constructor>
+                     | <array-range-constructor>
+                     | <array-kv-constructor>
+<array-list-constructor> ::= '[' <expr-list>? ']'
+<array-range-constructor> ::= '[' <expr> ':' <expr> (':' <expr>)? ']'
+<array-kv-constructor> ::= '{' (<array-kv-elem> (',' <array-kv-elem>)*)? '}'
+<array-kv-elem> ::= <expr> ':' <expr>
+<annotation> ::= '@' <id> | '@' <kw-expr>
+<kw-expr> ::= <id> '=' <expr>
+<literal> ::= <string-literal>
+           | <multiline-string-literal>
+           | <int-literal>
+           | <float-literal>
+           | <bool-literal>
+<float-literal> ::= <decimal>
+                 | <sci-decimal>
+                 | 'inf'
+                 | 'NaN'
+<bool-literal> ::= 'true'
+                | 'false'
+<expr-list> ::= <expr> (',' <expr>)*
+<type-name> ::= <id>
+<var-name> ::= <id>
+<func-name> ::= <id>
+<lval-list> ::= <lval-expr> (','<lval-expr>)*
+<lval-expr> ::= <var-name> (<array-subscript> | <struct-subscript>)*
+<app-arg-expr> ::= '@'?<var-name>
+                | <literal>
+                | <array-constructor>
+                | '(' <expr> ')'
