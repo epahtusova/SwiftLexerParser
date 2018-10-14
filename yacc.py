@@ -299,21 +299,28 @@ def p_wait_stmt(p):
     """
     wait-stmt  :  E_WAIT ( | E_DEEP) t_LPAREN expr-list t_RPAREN block
     """
+    p[0] = (p[1], p[2], p[3], p[4], p[5], p[6])
 
 def p_foreach_loop(p):
     """
     foreach-loop  :  annotation-star S_FOREACH var-name ( | (t_COMMA var-name)) S_IN expr block
     """
+    if len(p) == 9:
+        p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])
+    else:
+        p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7])
 
 def p_for_loop(p):
     """
-    for-loop  :  annotation-star S_FOR t_LPAREN for-init-list t_SEMICOLON expr ; for-update-list t_RPAREN block
+    for-loop  :  annotation-star S_FOR t_LPAREN for-init-list t_SEMICOLON expr t_SEMICOLON for-update-list t_RPAREN block
     """
+    p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10])
 
 def p_while_loop(p):
     """
-    while-loop  :   annotation WHILE t_LPAREN expr t_RPAREN block
+    while-loop  :   annotation S_WHILE t_LPAREN expr t_RPAREN block
     """
+    p[0] = (p[1], p[2], p[4], p[6])
 
 def p_for_init_list(p):
     """
@@ -325,6 +332,11 @@ def p_for_init(p):
     for-init  :  for-assignment
               | type-prefix var-name type-suffix t_ASSIGN expr
     """
+    if len(p) == 6:
+        p[0] = (p[1], p[2], p[3], p[4], p[5])
+    else:
+        p[0] = p[1]
+
 
 def p_for_update_list(p):
     """
