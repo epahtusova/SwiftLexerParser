@@ -1,6 +1,5 @@
 import ply.lex as lex
 from preprocess_comments import format_inline_comment, format_multiline_comment
-import ply.yacc as yacc
 
 reserved = {
     'if': 'IF',
@@ -128,8 +127,8 @@ tokens = [
              'ID', 'INT', 'DOUBLE', 'ASSIGN', 'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD', 'GREATER', 'GREATER_EQ', 'LESS',
              'LESS_EQ', 'EQUAL', 'NOT_EQUAL', 'MULT_AS', 'MINUS_AS', 'PLUS_AS', 'DIV_AS', 'MOD_AS', 'LPAREN', 'RPAREN',
              'LBRACE', 'RBRACE', 'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'AT', 'HASH',
-             'AMPERSAND',
-             'ARROW', 'BACKTICK', 'QUESTION', 'EXCLAMATION'
+             'AMPERSAND', 'BIT_OR', 'BIT_XOR', 'BIT_NOT', 'LSHIFT', 'RSHIFT', 'RANGE', 'HRANGE', 'ARROW', 'BACKTICK',
+             'QUESTION', 'EXCLAMATION', 'LOG_AND', 'LOG_OR',
          ] + list(reserved.values())
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -149,10 +148,19 @@ t_ASSIGN = r'='
 t_AT = r'@'
 t_HASH = r'\#'
 t_AMPERSAND = r'\&'
+t_BIT_NOT = r'\~'
+t_BIT_OR = r'\|'
+t_BIT_XOR = r'\^'
+t_LSHIFT = r'<<'
+t_RSHIFT = r'>>'
+t_RANGE = r'\.\.\.'
+t_HRANGE = r'\.\.<'
 t_ARROW = r'\->'
 t_BACKTICK = r'`'
 t_QUESTION = r'\?'
 t_EXCLAMATION = r'!'
+t_LOG_AND = r'\&\&'
+t_LOG_OR = r'\|\|'
 t_MOD = r'%'
 t_GREATER = r'>'
 t_GREATER_EQ = r'>='
@@ -186,7 +194,7 @@ def t_INT(t):
 
 
 # Ignored characters
-t_ignore = " \t"
+t_ignore = " \t\r"
 
 
 def t_newline(t):
@@ -200,10 +208,6 @@ def t_error(t):
 
 
 lexer = lex.lex()
-# Test it out
-# data = '''
-# -4e3    6
-# '''
 
 # Give the lexer some input
 file = open('in.txt', 'r', encoding='utf8')
@@ -211,7 +215,7 @@ data = file.read()
 data = format_multiline_comment(data)
 data = format_inline_comment(data)
 print(data)
-print('#'*20)
+print('#' * 20)
 lexer.input(data)
 
 # Tokenize

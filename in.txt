@@ -1,6 +1,2 @@
-/*
-dfsdf
-*/
-Set -3.5 1 >=
-   dfd //c
-   d
+//test
+a|| b
