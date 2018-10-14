@@ -1,7 +1,6 @@
 import ply.lex as lex
 from preprocess_comments import format_inline_comment, format_multiline_comment
 
-
 reserved = {
     'if': 'IF',
     'else': 'ELSE',
@@ -36,17 +35,17 @@ reserved = {
     'else': 'S_ELSE',
     'fallthrough': 'S_FALLTHROUGH',
     'for': 'S_FOR',
-    'foreach' : 'S_FOREACH',
+    'foreach': 'S_FOREACH',
     'guard': 'S_GUARD',
     'if': 'S_IF',
     'in': 'S_IN',
     'repeat': 'S_REPEAT',
     'return': 'S_RETURN',
     'switch': 'S_SWITCH',
-    'where' : 'S_WHERE',
-    'while' : 'S_WHILE',
-    'until' : 'S_UNTIL',
-    'iterate' : 'S_ITERATE',
+    'where': 'S_WHERE',
+    'while': 'S_WHILE',
+    'until': 'S_UNTIL',
+    'iterate': 'S_ITERATE',
     # EXPRESSIONS
     'as': 'E_AS',
     'Any': 'E_ANY',
@@ -62,11 +61,11 @@ reserved = {
     'Self': 'E_SELF_CAPITAL',
     'throw': 'E_THROW',
     'throws': 'E_THROWS',
-    'wait' : 'E_WAIT',
-    'stdin' : 'E_STDIN',
-    'stdout' : 'E_STDOUT',
-    'stderr' : 'E_STDERR',
-    'deep' : 'E_DEEP',
+    'wait': 'E_WAIT',
+    'stdin': 'E_STDIN',
+    'stdout': 'E_STDOUT',
+    'stderr': 'E_STDERR',
+    'deep': 'E_DEEP',
     # PATTERNS
     '_': 'P_UNDERSCORE',
     # KEYWORD WITH A NUMBER SIGN
@@ -108,13 +107,13 @@ reserved = {
     'Protocol': 'C_PROTOCOL',
     'required': 'C_REQUIRED',
     'right': 'C_RIGHT',
-    'global' : 'C_GLOBAL',
-    'const' : 'C_CONST',
+    'global': 'C_GLOBAL',
+    'const': 'C_CONST',
     'Type': 'C_TYPE',
-    'typedef' : 'C_TYPEDEF',
-    'pragma' : 'C_PRAGMA',
-    'set' : 'C_SET',
-    'app' : 'C_APP',
+    'typedef': 'C_TYPEDEF',
+    'pragma': 'C_PRAGMA',
+    'set': 'C_SET',
+    'app': 'C_APP',
     'unowned': 'C_UNOWNED',
     'weak': 'C_WEAK',
     'willSet': 'C_WILLSET',
@@ -139,7 +138,7 @@ tokens = [
              'LESS_EQ', 'EQUAL', 'NOT_EQUAL', 'MULT_AS', 'MINUS_AS', 'PLUS_AS', 'DIV_AS', 'MOD_AS', 'LPAREN', 'RPAREN',
              'LBRACE', 'RBRACE', 'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'AT', 'HASH',
              'AMPERSAND', 'BIT_OR', 'BIT_XOR', 'BIT_NOT', 'LSHIFT', 'RSHIFT', 'RANGE', 'HRANGE', 'ARROW', 'BACKTICK',
-             'QUESTION', 'EXCLAMATION', 'LOG_AND', 'LOG_OR',
+             'QUESTION', 'EXCLAMATION', 'LOG_AND', 'LOG_OR', 'INF', 'NAN', 'MULTPER', 'DOUBLEPER', 'UPD', 'STR_LITERAL'
          ] + list(reserved.values())
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -186,17 +185,19 @@ t_MINUS_AS = r'-='
 t_PLUS_AS = r'\+='
 t_DIV_AS = r'/='
 t_MOD_AS = r'%='
-t_AND = r'\&\&'
-t_OR = r'||'
 t_INF = r'inf'
 t_NAN = r'nan'
 t_UPD = r':='
-t_MNOGODOT = r'\.\.\.'
 
 
 def t_ID(t):
     r'[#]?[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value, 'ID')  # Check for reserved words
+    return t
+
+
+def t_STR_LITERAL(t):
+    r'"([^"\n]|(\\"))*"'
     return t
 
 
