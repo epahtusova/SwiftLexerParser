@@ -38,7 +38,7 @@ def p_global_const_defn(p):
 def p_import_stmt(p):
     """
     import-stmt  :  D_IMPORT module-path t_SEMICOLON
-                 | D_IMPORT string-literal t_SEMICOLON
+                 | D_IMPORT t_STR_LITERAL t_SEMICOLON
     """
     p[0] = ('IMPORT', p[2])
 
@@ -46,7 +46,7 @@ def p_module_path(p):
     """
     module-path  :  t_ID path-star
     """
-    p[0] = ('MODULE_PATH', p[1:])
+    p[0] = ('MODULE_PATH', tuple(p[1]))
 
 def p_path_star(p):
     """
@@ -54,7 +54,7 @@ def p_path_star(p):
                 | t_DOT t_ID path-star
     """
     if p[1] != '':
-        p[0] = ('PATH', [p[2]])
+        p[0] = ('PATH', p[2], tuple(p[3]))
     else:
         p[0] = p[1]
 
@@ -87,7 +87,7 @@ def p_type_params(p):
                  | t_LESS var-name comma-name-star t_GREATER
     """
     if p[1] != '':
-        p[0] = ('NAME', p[2], p[3])
+        p[0] = ('NAME', p[2], tuple(p[3]))
     else:
         p[0] = p[1]
 
@@ -97,7 +97,7 @@ def p_comma_name_star(p):
                     | t_COMMA var-name comma-name-star
     """
     if p[1] != '':
-        p[0] = ('NAME', p[2], p[3])
+        p[0] = ('NAME', p[2], tuple(p[3]))
     else:
         p[0] = p[1]
 
@@ -107,7 +107,7 @@ def p_formal_arg_list(p):
                      | t_LPAREN ((formal-arg comma-args-star) | )  t_RPAREN
     """
     if p[1] != '':
-        p[0] = ('ARGS', p[2])
+        p[0] = ('ARGS', tuple(p[2]))
     else:
         p[0] = p[1]
 
@@ -117,7 +117,7 @@ def p_comma_args_star(p):
                     |    t_COMMA formal-arg comma-args-star
     """
     if p[1] != '':
-        p[0] = ('ARGS', p[2], p[3])
+        p[0] = ('ARGS', p[2], tuple(p[3]))
     else:
         p[0] = p[1]
 
@@ -135,7 +135,7 @@ def p_swift_func_defn(p):
     """
     swift-func-defn  :  annotation-star func-hdr t_ARROW block
     """
-    p[0] = ( tuple(p[]))
+    p[0] = (p[2], tuple(p[1]), p[4])
     
 def p_annotation_star(p):
     """
@@ -144,31 +144,61 @@ def p_annotation_star(p):
     """
     if p[1] != '':
         p[0] = ('ANNOTATION', p[1])
+    else:
+        p[0] = p[1]
 
 def p_app_func_defn(p):
     """
     app-func-defn  :  annotation-star C_APP func-hdr t_LBRACE app-body t_RBRACE
     """
+    p[0] = ('APP', p[3], p[5])
+
 
 def p_app_body(p):
     """
-    app-body  :  app-arg-expr app-arg-expr * ((E_STDIN | E_STDOUT | E_STDERR) t_ASSIGN expr) * ( | t_SEMICOLON)
+    app-body  :  app-arg-expr app-arg-expr-star app-out-star ( | t_SEMICOLON)
     """
+    p[0] = ('BODY', p[1], tuple(p[2]), tuple(p[3]), p[4])
+
+
+def p_app_out_star(p):
+    """
+    app-out-star    :
+                    | (E_STDIN | E_STDOUT | E_STDERR) t_ASSIGN expr app-out-star
+    """
+    if p[1] != '':
+        p[0] = ('APP_OUT', (p[2], p[1], p[3]), tuple(p[4]))
+    else:
+        p[0] = p[1]
+
+def p_app_arg_expr_star(p):
+    """
+    app-arg-expr-star   :
+                        | app-arg-expr app-arg-expr-star
+    """
+    if p[1] != '':
+        p[0] = ('APP_ARG_EXPRESSION', p[1], tuple(p[2]))
+    else:
+        p[0] = p[1]
+
 
 def p_foreign_func_defn(p):
     """
     foreign-func-defn  :  annotation-star func-hdr foreign-func-body
     """
+    p[0] = (p[2], p[3], tuple(p[1]))
 
 def p_foreign_func_body(p):
     """
-    foreign-func-body  :  string-literal string-literal ( | string-literal) (t_LBRACKET string-literal | multiline-string-literalt_RBRACKET)?
+    foreign-func-body  :  t_STR_LITERAL t_STR_LITERAL ( | t_STR_LITERAL) ( | (t_LBRACKET (t_STR_LITERAL | t_MUL_STR_LITERAL) t_RBRACKET))
     """
+    p[0] = ('FOREIGN_FUNC', p[1], p[2], p[3], p[4])
 
 def p_var_decl(p):
     """
     var-decl  :  type-prefix var-decl-rest (t_COMMA var-decl-rest)*
     """
+    p[0] = ()
 
 def p_var_decl_rest(p):
     """
@@ -422,8 +452,8 @@ def p_kw_expr(p):
 
 def p_literal(p):
     """
-    literal  :  string-literal
-             | multiline-string-literal
+    literal  :  t_STR_LITERAL
+             | t_MUL_STR_LITERAL 
              | int-literal
              | float-literal
              | bool-literal
@@ -470,7 +500,7 @@ def p_const_name(p):
 
 def p_var_name(p):
     """
-    var-name  :  D_VAR t_ID
+    var-name  :     t_ID
     """
 
 def p_func_name(p):
