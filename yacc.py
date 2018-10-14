@@ -289,34 +289,50 @@ def p_for_assignment(p):
     """
     for-assignment  :  var-name t_ASSIGN expr
     """
+    p[0] = (p[2], p[1], p[3])
 
 def p_iterate_loop(p):
     """
     iterate-loop  :  S_ITERATE var-name block S_UNTIL t_LPAREN expr t_RPAREN
     """
+    p[0] = (p[1], p[2], p[3], p[4], p[6])
 
 def p_expr(p):
     """
     expr  :  or-expr
     """
+    p[0] = p[1]
 
 def p_or_expr(p):
     """
     or-expr  :  and-expr
-             | or-expr t_OR and-expr
+             | or-expr t_LOG_OR and-expr
     """
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
 
 def p_and_expr(p):
     """
     and-expr  :  eq-expr
-              | and-expr t_AND eq-expr
+              | and-expr t_LOG_AND eq-expr
     """
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
 
 def p_eq_expr(p):
     """
     eq-expr  :  cmp-expr
              | eq-expr (t_EQUAL | t_NOT_EQUAL) eq-expr
     """
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
+
 
 def p_cmp_expr(p):
     """
