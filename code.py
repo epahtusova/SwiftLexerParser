@@ -124,9 +124,10 @@ reserved = {
 }
 
 tokens = [
-             'ID', 'NUMBER', 'ASSIGN', 'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD', 'GREATER', 'GREATER_EQ', 'LESS',
+             'ID', 'INT', 'DOUBLE', 'ASSIGN', 'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD', 'GREATER', 'GREATER_EQ', 'LESS',
              'LESS_EQ', 'EQUAL', 'NOT_EQUAL', 'MULT_AS', 'MINUS_AS', 'PLUS_AS', 'DIV_AS', 'MOD_AS', 'LPAREN', 'RPAREN',
-             'LBRACE', 'RBRACE', 'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'AT', 'HASH', 'AMPERSAND',
+             'LBRACE', 'RBRACE', 'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'AT', 'HASH',
+             'AMPERSAND',
              'ARROW', 'BACKTICK', 'QUESTION', 'EXCLAMATION'
          ] + list(reserved.values())
 t_PLUS = r'\+'
@@ -171,7 +172,13 @@ def t_ID(t):
     return t
 
 
-def t_NUMBER(t):
+def t_DOUBLE(t):
+    r'[0-9]+(\.([0-9]+)?([eE][-+]?[0-9]+)?|[eE][-+]?[0-9]+)'
+    t.value = float(t.value)
+    return t
+
+
+def t_INT(t):
     r'\d+'
     t.value = int(t.value)
     return t
@@ -194,7 +201,7 @@ def t_error(t):
 lexer = lex.lex()
 # Test it out
 data = '''
--4e3
+-4e3    6
 '''
 
 # Give the lexer some input
