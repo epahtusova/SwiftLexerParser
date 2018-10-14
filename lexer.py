@@ -1,4 +1,5 @@
 import ply.lex as lex
+from preprocess_comments import format_inline_comment, format_multiline_comment
 import ply.yacc as yacc
 
 reserved = {
@@ -200,11 +201,17 @@ def t_error(t):
 
 lexer = lex.lex()
 # Test it out
-data = '''
--4e3    6
-'''
+# data = '''
+# -4e3    6
+# '''
 
 # Give the lexer some input
+file = open('in.txt', 'r', encoding='utf8')
+data = file.read()
+data = format_multiline_comment(data)
+data = format_inline_comment(data)
+print(data)
+print('#'*20)
 lexer.input(data)
 
 # Tokenize
