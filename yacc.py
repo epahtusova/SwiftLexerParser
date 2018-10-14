@@ -6,11 +6,13 @@ tokens = lexer.tokens
 
 
 def p_translation_unit(p):
-    'translation-unit  :  statement*'
+    """
+    translation-unit  :  statement *
+    """
 
 def p_statement(p):
     """
-    statement  :  ';'
+    statement  :  t_SEMICOLON
                 | new-type-defn
                 | global-const-defn
                 | import-stmt
@@ -27,30 +29,408 @@ def p_statement(p):
                 | update-stmt
     """
 
-def p_new_type_defn(p):
-    """
-    new-type-defn  :  'type' type-name '{' (var-decl ';') * '}' (new struct or subtype)
-                    | 'type' type-name standalone-type ';'
-                    | 'typedef' type-name standalone-type ';'
-    """
-
 def p_global_const_defn(p):
     """
-    global-const-defn  :  'global' 'const' var-decl ';'
+    global-const-defn  :  C_GLOBAL C_CONST var-decl t_SEMICOLON
     """
 
 def p_import_stmt(p):
     """
-    import-stmt  :  'import' module-path ';'
-                  | 'import' string-literal ';'
+    import-stmt  :  D_IMPORT module-path t_SEMICOLON
+                 | D_IMPORT string-literal t_SEMICOLON
     """
 
 def p_module_path(p):
     """
-    module-path  :  id ('.' id>)*
+    module-path  :  t_ID (t_DOT t_ID)*
     """
 
 def p_pragma_stms(p):
     """
-    pragma-stmt  :  'pragma' id expr  ';'
+    pragma-stmt  :  C_PRAGMA t_ID expr  t_SEMICOLON
+    """
+
+def p_func_defn(p):
+    """
+    func-defn  :  swift-func-defn
+                | app-func-defn
+                | foreign-func-defn
+    """
+
+def p_func_hdr(p):
+    """
+    func-hdr  :  type-params formal-arg-list func-name ( | formal-arg-list)
+    """
+
+def p_type_params(p):
+    """
+    type-params  :
+                 | t_LESS var-name (t_COMMA var-name) * t_GREATER
+    """
+
+def p_formal_arg_list(p):
+    """
+    formal-arg-list  :
+                     | t_LPAREN ((formal-arg (t_COMMA formal-arg)*) | )  t_RPAREN
+    """
+
+def p_formal_arg(p):
+    """
+    formal-arg  :  type-prefix (  | t_MNOGODOT) var-name type-suffix ( | (t_ASSIGN expr))
+    """
+
+def p_swift_func_defn(p):
+    """
+    swift-func-defn  :  annotation * func-hdr block
+    """
+
+def p_app_func_defn(p):
+    """
+    app-func-defn  :  annotation * C_APP func-hdr t_LBRACE app-body t_RBRACE
+    """
+
+def p_app_body(p):
+    """
+    app-body  :  app-arg-expr app-arg-expr * ((E_STDIN | E_STDOUT | E_STDERR) t_ASSIGN expr) * ( | t_SEMICOLON)
+    """
+
+def p_foreign_func_defn(p):
+    """
+    foreign-func-defn  :  annotation * func-hdr foreign-func-body
+    """
+
+def p_foreign_func_body(p):
+    """
+    foreign-func-body  :  string-literal string-literal ( | string-literal) (t_LBRACKET string-literal | multiline-string-literalt_RBRACKET)?
+    """
+
+def p_var_decl(p):
+    """
+    var-decl  :  type-prefix var-decl-rest (t_COMMA var-decl-rest)*
+    """
+
+def p_var_decl_rest(p):
+    """
+    var-decl-rest  :  var-name type-suffix ( | var-mapping) ( | (t_ASSIGN expr))
+    """
+
+def p_type_prefix(p):
+    """
+    type-prefix  :  type-name
+                    | param-type
+    """
+
+def p_param_type(p):
+    """
+    param-type  :  type-name t_LESS standalone-type t_GREATER
+    """
+
+def p_type_suffix(p):
+    """
+    type-suffix  :  (t_LBRACKET ( | standalone-type) t_RBRACKET)*
+    """
+
+def p_standalone_type(p):
+    """
+    standalone-type  :  type-prefix type-suffix
+    """
+
+def p_var_mapping(p):
+    """
+    var-mapping  :  t_LESS expr t_GREATER
+    """
+
+def p_block(p):
+    """
+    block  :  t_LBRACE statement * t_RBRACE
+    """
+
+def p_stmt_chain(p):
+    """
+    stmt-chain  :  chainable-stmt (t_SEMICOLON | t_ARROW statement)
+    """
+
+def p_chainable_stmt(p):
+    """
+    chainable-stmt  :  var-name
+                      | func-call
+                      | var-decl
+                      | assignment
+    """
+
+def p_assignment(p):
+    """
+    assignment  :  (lval-list | t_LPAREN lval-list t_RPAREN) (t_ASSIGN | t_PLUS_AS) expr-list
+    """
+
+def p_update_stmt(p):
+    """
+    update-stmt  :  var-name t_LESS t_ID t_GREATER t_UPD expr t_SEMICOLON
+    """
+
+def p_if_stmt(p):
+    """
+    if-stmt  :  IF t_LPAREN expr t_RPAREN block ( | (ELSE block))
+    """
+
+def p_switch_stmt(p):
+    """
+    switch-stmt  :  S_SWITCH t_LPAREN expr t_RPAREN t_LBRACE case * ( | default) t_RBRACE
+    """
+
+def p_case(p):
+    """
+    case  :  S_CASE int-literal t_COLON statement*
+    """
+
+def p_default(p):
+    """
+    default  :  S_DEFAULT t_COLON statement*
+    """
+
+def p_wait_stmt(p):
+    """
+    wait-stmt  :  E_WAIT ( | E_DEEP) t_LPAREN expr-list t_RPAREN block
+    """
+
+def p_foreach_loop(p):
+    """
+    foreach-loop  :  annotation * S_FOREACH var-name ( | (t_COMMA var-name)) S_IN expr block
+    """
+
+def p_for_loop(p):
+    """
+    for-loop  :  annotation * S_FOR t_LPAREN for-init-list t_SEMICOLON expr ; for-update-list t_RPAREN block
+    """
+
+def p_while_loop(p):
+    """
+    while-loop  :   annotation WHILE t_LPAREN expr t_RPAREN block
+    """
+
+def p_for_init_list(p):
+    """
+    for-init-list  :  for-init (t_COMMAfor-init)*
+    """
+
+def p_for_init(p):
+    """
+    for-init  :  for-assignment
+              | type-prefix var-name type-suffix t_ASSIGN expr
+    """
+
+def p_for_update_list(p):
+    """
+    for-update-list  :  for-assignment (t_COMMA for-assignment)*
+    """
+
+def p_for_assignment(p):
+    """
+    for-assignment  :  var-name t_ASSIGN expr
+    """
+
+def p_iterate_loop(p):
+    """
+    iterate-loop  :  S_ITERATE var-name block S_UNTIL t_LPAREN expr t_RPAREN
+    """
+
+def p_expr(p):
+    """
+    expr  :  or-expr
+    """
+
+def p_or_expr(p):
+    """
+    or-expr  :  and-expr
+             | or-expr t_OR and-expr
+    """
+
+def p_and_expr(p):
+    """
+    and-expr  :  eq-expr
+              | and-expr t_AND eq-expr
+    """
+
+def p_eq_expr(p):
+    """
+    eq-expr  :  cmp-expr
+             | eq-expr (t_EQUAL | t_NOT_EQUAL) eq-expr
+    """
+
+def p_cmp_expr(p):
+    """
+    cmp-expr  :  add-expr
+              | cmp-expr (t_LESS | t_ASSIGN | t_GREATER | t_GREATER_EQ) add-expr
+    """
+
+def p_add_expr(p):
+    """
+    add-expr  :  mult-expr
+              | add-expr (t_PLUS | t_MINUS) mult-expr
+    """
+
+def p_mult_expr(p):
+    """
+    mult-expr  :  unary-expr
+               | mult-expr (t_MULT | t_DIV | t_MULTPER | t_DOUBLEPER | t_MOD) unary-expr
+    """
+
+def p_unary_expr(p):
+    """
+    unary-expr  :  postfix-expr
+                  | (t_MINUS | t_EXCLAMATION) postfix-expr
+    """
+
+def p_postfix_expr(p):
+    """
+    postfix-expr  :  base-expr
+                  | postfix-expr(array-subscript | struct-subscript)
+    """
+
+def p_array_subscript(p):
+    """
+    array-subscript  :  t_LBRACKET expr t_RBRACKET
+    """
+
+def p_struct_subscript(p):
+    """
+    struct-subscript  :  t_DOT t_ID
+    """
+
+def p_base_expr(p):
+    """
+    base-expr  :  literal
+                 | func-call
+                 | var-name
+                 | t_LPAREN expr t_RPAREN
+                 | tuple-constructor
+                 | array-constructor
+    """
+
+def p_func_call(p):
+    """
+    func-call  :  annotation* func-name t_LPAREN func-call-arg-list t_RPAREN
+    """
+
+def p_func_call_arg_list(p):
+    """
+    func-call-arg-list  :  (expr | kw-expr) (t_COMMA (expr | kw-expr))*
+    """
+
+def p_tuple_constructor(p):
+    """
+    tuple-constructor  :  t_LPAREN expr t_COMMA expr (t_COMMA expr) * t_RPAREN
+    """
+
+def p_array_constructor(p):
+    """
+    array-constructor  :  array-list-constructor
+                       | array-range-constructor
+                       | array-kv-constructor
+    """
+
+def p_array_list_constructor(p):
+    """
+    array-list-constructor  :  t_LBRACKET expr-list? t_RBRACKET
+    """
+
+def p_array_range_constructor(p):
+    """
+    array-range-constructor  :  t_LBRACKET expr t_COLON expr (t_COLON expr)? t_RBRACKET
+    """
+
+def p_array_kv_constructor(p):
+    """
+    array-kv-constructor  :  t_LBRACE (array-kv-elem (t_COMMA array-kv-elem)*)? t_RBRACE
+    """
+
+def p_array_kv_elem(p):
+    """
+    array-kv-elem  :  expr t_COLON expr
+    """
+
+def p_annotation(p):
+    """
+    annotation  :  t_AT t_ID | t_AT kw-expr
+    """
+
+def p_kw_expr(p):
+    """
+    kw-expr  :  t_ID t_ASSIGN expr
+    """
+
+def p_literal(p):
+    """
+    literal  :  string-literal
+             | multiline-string-literal
+             | int-literal
+             | float-literal
+             | bool-literal
+    """
+
+def p_float_literal(p):
+    """
+    float-literal  :  t_DOUBLE
+                     | t_DOUBLE
+                     | t_INF
+                     | t_NAN
+    """
+
+def  p_bool_literal(p):
+    """
+    bool-literal  :  E_TRUE
+                  | E_FALSE
+    """
+
+def p_expr_list(p):
+    """
+    expr-list  :  expr (t_COMMA expr)*
+    """
+
+def p_type_name(p):
+    """
+    type-name  :  class_INT
+               | class_DOUBLE
+               | class_FLOAT
+               | class_VOID
+               | class_UINT
+               | class_BOOL
+               | class_CHARACTER
+               | class_String
+               | collection_SET
+               | collection_ARRAY
+               | collection_DICT
+    """
+
+def p_const_name(p):
+    """
+    const-name  :   D_LET t_ID
+    """
+
+def p_var_name(p):
+    """
+    var-name  :  D_VAR t_ID
+    """
+
+def p_func_name(p):
+    """
+    func-name  :  D_FUNCTION t_ID
+    """
+
+def p_lval_list(p):
+    """
+    lval-list  :  lval-expr (t_COMMA lval-expr)*
+    """
+
+def p_lval_expr(p):
+    """
+    lval-expr  :  var-name (array-subscript | struct-subscript)*
+    """
+
+def p_app_arg_expr(p):
+    """
+    app-arg-expr  :  ( | t_AT) var-name
+                    | literal
+                    | array-constructor
+                    | t_LPAREN expr t_RPAREN
     """
