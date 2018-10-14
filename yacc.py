@@ -436,12 +436,14 @@ def p_float_literal(p):
                      | t_INF
                      | t_NAN
     """
+    p[0] = p[1]
 
 def  p_bool_literal(p):
     """
     bool-literal  :  E_TRUE
                   | E_FALSE
     """
+    p[0] = p[1]
 
 def p_expr_list(p):
     """
@@ -462,21 +464,25 @@ def p_type_name(p):
                | collection_ARRAY
                | collection_DICT
     """
+    p[0] = p[1]
 
 def p_const_name(p):
     """
     const-name  :   D_LET t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_var_name(p):
     """
     var-name  :  D_VAR t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_func_name(p):
     """
     func-name  :  D_FUNCTION t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_lval_list(p):
     """
@@ -495,6 +501,12 @@ def p_app_arg_expr(p):
                     | array-constructor
                     | t_LPAREN expr t_RPAREN
     """
+    if len(p) == 3:
+        p[0] = ('APP_ARG', p[2], p[1])
+    elif len(p) == 4:
+        p[0] = ('APP_ARG', p[2])
+    else:
+        p[0] = p[1]
 
 yacc.yacc()
 filename = ''
