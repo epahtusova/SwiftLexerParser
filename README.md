@@ -1,9 +1,12 @@
 #Swift Parser
+
 ###Team:
 Vitaly Volobuev
 Yekaterina Pakhtusova
+
 ###Implementation
 Lexer and parser are implemented in Python using PLY tool.
+
 ###How to run a parser
 TBD
 
