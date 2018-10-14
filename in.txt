@@ -1,2 +1,6 @@
 //test
 "dg45sfg9"
+Int a = 1
+"""sf
+sdf5 df
+"""

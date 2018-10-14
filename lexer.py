@@ -138,7 +138,8 @@ tokens = [
              'LESS_EQ', 'EQUAL', 'NOT_EQUAL', 'MULT_AS', 'MINUS_AS', 'PLUS_AS', 'DIV_AS', 'MOD_AS', 'LPAREN', 'RPAREN',
              'LBRACE', 'RBRACE', 'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'AT', 'HASH',
              'AMPERSAND', 'BIT_OR', 'BIT_XOR', 'BIT_NOT', 'LSHIFT', 'RSHIFT', 'RANGE', 'HRANGE', 'ARROW', 'BACKTICK',
-             'QUESTION', 'EXCLAMATION', 'LOG_AND', 'LOG_OR', 'INF', 'NAN', 'MULTPER', 'DOUBLEPER', 'UPD', 'STR_LITERAL'
+             'QUESTION', 'EXCLAMATION', 'LOG_AND', 'LOG_OR', 'INF', 'NAN', 'MULTPER', 'DOUBLEPER', 'UPD', 'STR_LITERAL',
+             'MUL_STR_LITERAL'
          ] + list(reserved.values())
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -196,9 +197,14 @@ def t_ID(t):
     return t
 
 
+def t_MUL_STR_LITERAL(t):
+    r'"""([^"\n]|(\\")|\n)*"""'
+    return t
+
 def t_STR_LITERAL(t):
     r'"([^"\n]|(\\"))*"'
     return t
+
 
 
 def t_DOUBLE(t):
