@@ -107,19 +107,32 @@ reserved = {
     'unowned': 'C_UNOWNED',
     'weak': 'C_WEAK',
     'willSet': 'C_WILLSET',
+    # Default classes
+    'Int': 'class_INT',
+    'Double': 'class_DOUBLE',
+    'Float': 'class_FLOAT',
+    'Void': 'class_VOID',
+    'UInt': 'class_UINT',
+    'Bool': 'class_BOOL',
+    'Character': 'class_CHARACTER',
+    'String': 'class_String',
+    # Collections
+    'Set': 'collection_SET',
+    'Array': 'collection_ARRAY',
+    'Dictionary': 'collection_DICT',
 
 }
 
 tokens = [
-             'ID', 'NUMBER', 'PLUS', 'MINUS', 'MULT', 'DIV', 'EQUALS', 'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE',
-             'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'ASSIGN', 'AT', 'HASH', 'AMPERSAND',
+             'ID', 'NUMBER', 'ASSIGN', 'PLUS', 'MINUS', 'MULT', 'DIV', 'MOD', 'GREATER', 'GREATER_EQ', 'LESS',
+             'LESS_EQ', 'EQUAL', 'NOT_EQUAL', 'MULT_AS', 'MINUS_AS', 'PLUS_AS', 'DIV_AS', 'MOD_AS', 'LPAREN', 'RPAREN',
+             'LBRACE', 'RBRACE', 'RBRACKET', 'LBRACKET', 'DOT', 'COMMA', 'COLON', 'SEMICOLON', 'AT', 'HASH', 'AMPERSAND',
              'ARROW', 'BACKTICK', 'QUESTION', 'EXCLAMATION'
          ] + list(reserved.values())
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_MULT = r'\*'
 t_DIV = r'/'
-t_EQUALS = r'='
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_LBRACE = r'\{'
@@ -138,6 +151,18 @@ t_ARROW = r'\->'
 t_BACKTICK = r'`'
 t_QUESTION = r'\?'
 t_EXCLAMATION = r'!'
+t_MOD = r'%'
+t_GREATER = r'>'
+t_GREATER_EQ = r'>='
+t_LESS = r'<'
+t_LESS_EQ = r'<='
+t_EQUAL = r'=='
+t_NOT_EQUAL = r'!='
+t_MULT_AS = r'\*='
+t_MINUS_AS = r'-='
+t_PLUS_AS = r'\+='
+t_DIV_AS = r'/='
+t_MOD_AS = r'%='
 
 
 def t_ID(t):
@@ -169,7 +194,7 @@ def t_error(t):
 lexer = lex.lex()
 # Test it out
 data = '''
-->
+-4e3
 '''
 
 # Give the lexer some input
