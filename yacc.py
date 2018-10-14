@@ -7,7 +7,13 @@ tokens = lexer.tokens
 
 def p_translation_unit(p):
     """
-    translation-unit  :  statement *
+    translation-unit  :  statement-star
+    """
+
+def p_statement_star(p):
+    """
+    statement-star  :
+                    | statement statement-star
     """
 
 def p_statement(p):
@@ -196,9 +202,19 @@ def p_foreign_func_body(p):
 
 def p_var_decl(p):
     """
-    var-decl  :  type-prefix var-decl-rest (t_COMMA var-decl-rest)*
+    var-decl  :  type-prefix var-decl-rest
     """
-    p[0] = ()
+    p[0] = ('VARS_DEC', p[1], tuple(p[2]))
+
+def p_var_decl_rest_star(p):
+    """
+    var-decl-rest-star  :
+                        | t_COMMA var-decl-rest var-decl-rest-star
+    """
+    if p[1] != '':
+        p[0] = ('VAR_DECL', p[2], tuple(p[3]))
+    else:
+        p[0] = p[1]
 
 def p_var_decl_rest(p):
     """
