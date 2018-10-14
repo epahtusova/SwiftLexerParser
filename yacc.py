@@ -353,40 +353,62 @@ def p_cmp_expr(p):
     cmp-expr  :  add-expr
               | cmp-expr (t_LESS | t_ASSIGN | t_GREATER | t_GREATER_EQ) add-expr
     """
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
 
 def p_add_expr(p):
     """
     add-expr  :  mult-expr
               | add-expr (t_PLUS | t_MINUS) mult-expr
     """
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
 
 def p_mult_expr(p):
     """
     mult-expr  :  unary-expr
                | mult-expr (t_MULT | t_DIV | t_MULTPER | t_DOUBLEPER | t_MOD) unary-expr
     """
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
 
 def p_unary_expr(p):
     """
     unary-expr  :  postfix-expr
                   | (t_MINUS | t_EXCLAMATION) postfix-expr
     """
+    if len(p) == 3:
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = p[1]
 
 def p_postfix_expr(p):
     """
     postfix-expr  :  base-expr
-                  | postfix-expr(array-subscript | struct-subscript)
+                  | postfix-expr (array-subscript | struct-subscript)
     """
+    if len(p) == 3:
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = p[1]
 
 def p_array_subscript(p):
     """
     array-subscript  :  t_LBRACKET expr t_RBRACKET
     """
+    p[0] = p[2]
 
 def p_struct_subscript(p):
     """
     struct-subscript  :  t_DOT t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_base_expr(p):
     """
@@ -397,6 +419,10 @@ def p_base_expr(p):
                  | tuple-constructor
                  | array-constructor
     """
+    if len(p) == 4:
+        p[0] = p[2]
+    else:
+        p[0] = p[1]
 
 def p_func_call(p):
     """
@@ -419,6 +445,7 @@ def p_array_constructor(p):
                        | array-range-constructor
                        | array-kv-constructor
     """
+    p[0] = p[1]
 
 def p_array_list_constructor(p):
     """
@@ -439,16 +466,19 @@ def p_array_kv_elem(p):
     """
     array-kv-elem  :  expr t_COLON expr
     """
+    p[0] = (p[2], p[1], p[3])
 
 def p_annotation(p):
     """
     annotation  :  t_AT t_ID | t_AT kw-expr
     """
+    p[0] = (p[1], p[2])
 
 def p_kw_expr(p):
     """
     kw-expr  :  t_ID t_ASSIGN expr
     """
+    p[0] = (p[2], p[1], p[3])
 
 def p_literal(p):
     """
@@ -458,6 +488,7 @@ def p_literal(p):
              | float-literal
              | bool-literal
     """
+    p[0] = p[1]
 
 def p_float_literal(p):
     """
@@ -466,12 +497,14 @@ def p_float_literal(p):
                      | t_INF
                      | t_NAN
     """
+    p[0] = p[1]
 
 def  p_bool_literal(p):
     """
     bool-literal  :  E_TRUE
                   | E_FALSE
     """
+    p[0] = p[1]
 
 def p_expr_list(p):
     """
@@ -492,21 +525,25 @@ def p_type_name(p):
                | collection_ARRAY
                | collection_DICT
     """
+    p[0] = p[1]
 
 def p_const_name(p):
     """
     const-name  :   D_LET t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_var_name(p):
     """
     var-name  :     t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_func_name(p):
     """
     func-name  :  D_FUNCTION t_ID
     """
+    p[0] = (p[1], p[2])
 
 def p_lval_list(p):
     """
@@ -525,6 +562,12 @@ def p_app_arg_expr(p):
                     | array-constructor
                     | t_LPAREN expr t_RPAREN
     """
+    if len(p) == 3:
+        p[0] = ('APP_ARG', p[2], p[1])
+    elif len(p) == 4:
+        p[0] = ('APP_ARG', p[2])
+    else:
+        p[0] = p[1]
 
 yacc.yacc()
 filename = ''
