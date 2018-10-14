@@ -33,22 +33,36 @@ def p_global_const_defn(p):
     """
     global-const-defn  :  C_GLOBAL C_CONST var-decl t_SEMICOLON
     """
+    p[0] = ('GLOBAL_CONSTANT', p[3])
 
 def p_import_stmt(p):
     """
     import-stmt  :  D_IMPORT module-path t_SEMICOLON
                  | D_IMPORT string-literal t_SEMICOLON
     """
+    p[0] = ('IMPORT', p[2])
 
 def p_module_path(p):
     """
-    module-path  :  t_ID (t_DOT t_ID)*
+    module-path  :  t_ID path-star
     """
+    p[0] = ('MODULE_PATH', p[1:])
+
+def p_path_star(p):
+    """
+    path-star   :
+                | t_DOT t_ID path-star
+    """
+    if p[1] != '':
+        p[0] = ('PATH', [p[2]])
+    else:
+        p[0] = p[1]
 
 def p_pragma_stms(p):
     """
     pragma-stmt  :  C_PRAGMA t_ID expr  t_SEMICOLON
     """
+    p[0] = ('PRAGMA', p[2], p[3])
 
 def p_func_defn(p):
     """
@@ -56,37 +70,84 @@ def p_func_defn(p):
                 | app-func-defn
                 | foreign-func-defn
     """
+    p[0] = p[1]
 
 def p_func_hdr(p):
     """
     func-hdr  :  type-params formal-arg-list func-name ( | formal-arg-list)
     """
+    if p[4] != '':
+        p[0] = (p[3], p[4], p[1], p[2])
+    else:
+        p[0] = (p[3], p[1], p[2])
 
 def p_type_params(p):
     """
     type-params  :
-                 | t_LESS var-name (t_COMMA var-name) * t_GREATER
+                 | t_LESS var-name comma-name-star t_GREATER
     """
+    if p[1] != '':
+        p[0] = ('NAME', p[2], p[3])
+    else:
+        p[0] = p[1]
+
+def p_comma_name_star(p):
+    """
+    comma-name-star :
+                    | t_COMMA var-name comma-name-star
+    """
+    if p[1] != '':
+        p[0] = ('NAME', p[2], p[3])
+    else:
+        p[0] = p[1]
 
 def p_formal_arg_list(p):
     """
     formal-arg-list  :
-                     | t_LPAREN ((formal-arg (t_COMMA formal-arg)*) | )  t_RPAREN
+                     | t_LPAREN ((formal-arg comma-args-star) | )  t_RPAREN
     """
+    if p[1] != '':
+        p[0] = ('ARGS', p[2])
+    else:
+        p[0] = p[1]
+
+def p_comma_args_star(p):
+    """
+    comma-args-star :
+                    |    t_COMMA formal-arg comma-args-star
+    """
+    if p[1] != '':
+        p[0] = ('ARGS', p[2], p[3])
+    else:
+        p[0] = p[1]
 
 def p_formal_arg(p):
     """
-    formal-arg  :  type-prefix (  | t_MNOGODOT) var-name type-suffix ( | (t_ASSIGN expr))
+    formal-arg  :  type-prefix (  | t_RANGE) var-name type-suffix ( | (t_ASSIGN expr))
     """
+    range_ = ''
+    assign = ''
+    if p[2] != '': range_ = p[2]
+    if p[5] != '': assign = ('ASSIGN', p[5])
+    p[0] = ('ARG', p[1], p[3], p[4], range_, assign)
 
 def p_swift_func_defn(p):
     """
-    swift-func-defn  :  annotation * func-hdr block
+    swift-func-defn  :  annotation-star func-hdr t_ARROW block
     """
+    p[0] = ( tuple(p[]))
+    
+def p_annotation_star(p):
+    """
+    annotation-star :   
+                    |   annotation annotation-star 
+    """
+    if p[1] != '':
+        p[0] = ('ANNOTATION', p[1])
 
 def p_app_func_defn(p):
     """
-    app-func-defn  :  annotation * C_APP func-hdr t_LBRACE app-body t_RBRACE
+    app-func-defn  :  annotation-star C_APP func-hdr t_LBRACE app-body t_RBRACE
     """
 
 def p_app_body(p):
@@ -96,7 +157,7 @@ def p_app_body(p):
 
 def p_foreign_func_defn(p):
     """
-    foreign-func-defn  :  annotation * func-hdr foreign-func-body
+    foreign-func-defn  :  annotation-star func-hdr foreign-func-body
     """
 
 def p_foreign_func_body(p):
@@ -195,12 +256,12 @@ def p_wait_stmt(p):
 
 def p_foreach_loop(p):
     """
-    foreach-loop  :  annotation * S_FOREACH var-name ( | (t_COMMA var-name)) S_IN expr block
+    foreach-loop  :  annotation-star S_FOREACH var-name ( | (t_COMMA var-name)) S_IN expr block
     """
 
 def p_for_loop(p):
     """
-    for-loop  :  annotation * S_FOR t_LPAREN for-init-list t_SEMICOLON expr ; for-update-list t_RPAREN block
+    for-loop  :  annotation-star S_FOR t_LPAREN for-init-list t_SEMICOLON expr ; for-update-list t_RPAREN block
     """
 
 def p_while_loop(p):
@@ -434,3 +495,7 @@ def p_app_arg_expr(p):
                     | array-constructor
                     | t_LPAREN expr t_RPAREN
     """
+
+yacc.yacc()
+filename = ''
+data = open(filename, 'r').readlines()

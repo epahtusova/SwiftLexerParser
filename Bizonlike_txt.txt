@@ -41,7 +41,7 @@ formal-arg-list  :
 	             ;
 formal-arg  :  type-prefix (  | '...') var-name type-suffix ( | ('=' expr))
 	        ;
-swift-func-defn  :  annotation * func-hdr block
+swift-func-defn  :  annotation * func-hdr '->' block
 	             ;
 app-func-defn  :  annotation * 'app' func-hdr '{' app-body '}'
 	           ;
