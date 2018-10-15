@@ -239,16 +239,9 @@ def tokenize():
     data = file.read()
     data = format_multiline_comment(data)
     data = format_inline_comment(data)
-    print(data)
-    print('#' * 20)
     lexer.input(data)
+    return lexer
 
-    # Tokenize
-    while True:
-        tok = lexer.token()
-        if not tok:
-            break  # No more input
-        print(tok)
 
 
 # tokenize()
