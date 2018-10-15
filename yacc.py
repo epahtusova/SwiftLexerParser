@@ -16,10 +16,10 @@ def p_statement_star(p):
     statement-star  :
                     | statement statement-star
     """
-    if p[1] != '':
+    try:
         p[0] = (p[1], tuple(p[2]))
-    else:
-        p[0] = p[1]
+    except:
+        pass
 
 
 def p_statement(p):
@@ -361,6 +361,7 @@ def p_type_suffix(p):
     type-suffix  :
                  | LBRACKET empty-or-standalone-type RBRACKET type-suffix
     """
+    print(p)
     if p[1] != '':
         p[0] = ('TYPE_SUFFIX', p[4], tuple(p[2]))
     else:
@@ -1087,14 +1088,10 @@ def p_opt_at(p):
     p[0] = p[1]
 
 
-parser = yacc.yacc()
+def parse():
+    print('POEHALI')
+    lex = lexer.tokenize()
+    parser = yacc.yacc()
+    ast = parser.parse(lexer=lex, debug=1)
+    print(ast)
 
-
-def parse(data, debug=0):
-    l = lexer.lexer.input(data)
-    parser.error = 0
-    p = parser.parse(data, debug=debug, lexer=l)
-    if parser.error:
-        print('Error occurred during parsing stage')
-        return None
-    return p
