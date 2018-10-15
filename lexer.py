@@ -201,10 +201,10 @@ def t_MUL_STR_LITERAL(t):
     r'"""([^"\n]|(\\")|\n)*"""'
     return t
 
+
 def t_STR_LITERAL(t):
     r'"([^"\n]|(\\"))*"'
     return t
-
 
 
 def t_DOUBLE(t):
