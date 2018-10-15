@@ -354,7 +354,7 @@ def p_block(p):
 
 def p_stmt_chain(p):
     """
-    stmt-chain  :  chainable-stmt ((SEMICOLON | ARROW) statement)
+    stmt-chain  :  chainable-stmt semicolon-or-arrow statement
     """
     p[0] = ('STATEMENT_CHAIN', ('STATEMENT', p[2]), p[1])
 
@@ -499,7 +499,7 @@ def p_opt_comma_var_name(p):
 
 def p_for_loop(p):
     """
-    for-loop  :  annotation-star S_FOR LPAREN for-init-list SEMICOLON expr ; for-update-list RPAREN block
+    for-loop  :  annotation-star S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-update-list RPAREN block
     """
     p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10])
 
@@ -593,7 +593,7 @@ def p_and_expr(p):
 def p_eq_expr(p):
     """
     eq-expr  :  cmp-expr
-             | eq-expr (EQUAL | NOT_EQUAL) eq-expr
+             | eq-expr eq-or-not-eq eq-expr
     """
     if len(p) == 4:
         p[0] = (p[2], p[1], p[3])
