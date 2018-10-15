@@ -92,7 +92,7 @@ def p_func_defn(p):
 
 def p_func_hdr(p):
     """
-    func-hdr  : D_FUNCTION ID formal-arg-list ID empty-or-arg-list
+    func-hdr  : D_FUNCTION ID formal-arg-list empty-or-arg-list
     """
     p[0] = (p[3], p[1], p[2], p[4])
 
@@ -155,9 +155,9 @@ def p_comma_args_star(p):
 
 def p_formal_arg(p):
     """
-    formal-arg  :  empty-or-range var-name  type-prefix
+    formal-arg  :  empty-or-range var-name COLON type-prefix
     """
-    p[0] = ('ARG', p[1], p[3], p[4], p[2], p[5])
+    p[0] = ('ARG', p[2], p[4], p[1])
 
 
 def p_empty_or_range(p):
@@ -178,7 +178,7 @@ def p_swift_func_defn(p):
     """
     swift-func-defn  :   func-hdr ARROW block
     """
-    p[0] = (p[2], (p[1]), p[4])
+    p[0] = (p[1], p[3])
 
 
 def p_app_func_defn(p):
