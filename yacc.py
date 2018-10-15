@@ -220,12 +220,21 @@ def p_empty_or_semicolon(p):
 def p_app_out_star(p):
     """
     app-out-star    :
-                    | (E_STDIN | E_STDOUT | E_STDERR) ASSIGN expr app-out-star
+                    | std-in-out-err ASSIGN expr app-out-star
     """
     if p[1] != '':
         p[0] = ('APP_OUT', (p[2], p[1], p[3]), tuple(p[4]))
     else:
         p[0] = p[1]
+
+
+def p_std_in_out_err(p):
+    """
+    std-in-out-err  : E_STDIN
+                    | E_STDOUT
+                    | E_STDERR
+    """
+    p[0] = p[1]
 
 
 def p_app_arg_expr_star(p):
