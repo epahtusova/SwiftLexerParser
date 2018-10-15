@@ -274,7 +274,7 @@ def p_var_decl_rest_star(p):
 
 def p_var_decl_rest(p):
     """
-    var-decl-rest  :  var-name type-suffix empty-or-var-mappign empty-or-assign-expr
+    var-decl-rest  :  var-name type-suffix ( | var-mapping) ( | (ASSIGN expr))
     """
     p[0] = ('VAR_DECL_TAILER', p[1], p[2], p[3], p[4])
 
@@ -348,6 +348,15 @@ def p_stmt_chain(p):
     """
     p[0] = ('STATEMENT_CHAIN', ('STATEMENT', p[2]), p[1])
 
+
+def p_semicolon_or_arrow(p):
+    """
+    semicolon-or-arrow  : SEMICOLON
+                        | ARROW
+    """
+    p[0] = p[1]
+
+
 def p_chainable_stmt(p):
     """
     chainable-stmt  :  var-name
@@ -359,7 +368,7 @@ def p_chainable_stmt(p):
 
 def p_assignment(p):
     """
-    assignment  :  lval-or-lval-list (ASSIGN | PLUS_AS) expr-list
+    assignment  :  lval-or-paren-lval assign-or-plusas expr-list
     """
     p[0] = ('ASSIGNMENT', p[3], p[1], p[2])
 
@@ -373,6 +382,26 @@ def p_lval_or_lval_list(p):
         p[0] = p[1]
     else:
         p[0] = (p[2])
+
+
+def p_assign_or_plusas(p):
+    """
+    assign-or-plusas    : ASSIGN
+                        | PLUS_AS
+    """
+    p[0] = p[1]
+
+
+def p_lval_or_paren_lval(p):
+    """
+    lval-or-paren-lval  :   lval-list
+                        | LPAREN lval-list RPAREN
+    """
+    if len(p) == 4:
+        p[0] = p[2]
+    else:
+        p[0] = p[1]
+
 
 def p_update_stmt(p):
     """
@@ -562,45 +591,95 @@ def p_eq_expr(p):
         p[0] = p[1]
 
 
+def p_eq_or_not_eq(p):
+    """
+    eq-or-not-eq    : EQUAL
+                    | NOT_EQUAL
+    """
+    p[0] = p[1]
+
+
 def p_cmp_expr(p):
     """
     cmp-expr  :  add-expr
-              | cmp-expr (LESS | ASSIGN | GREATER | GREATER_EQ) add-expr
+              | cmp-expr cmp-sign add-expr
     """
     if len(p) == 4:
         p[0] = (p[2], p[1], p[3])
     else:
         p[0] = p[1]
+
+
+def p_cmp_sign(p):
+    """
+    cmp-sign        : LESS
+                    | LESS_EQ
+                    | EQUAL
+                    | GREATER
+                    | GREATER_EQ
+    """
+    p[0] = p[1]
+
 
 def p_add_expr(p):
     """
     add-expr  :  mult-expr
-              | add-expr (PLUS | MINUS) mult-expr
+              | add-expr add-sign mult-expr
     """
     if len(p) == 4:
         p[0] = (p[2], p[1], p[3])
     else:
         p[0] = p[1]
+
+
+def p_add_sign(p):
+    """
+    add-sign    : PLUS
+                | MINUS
+    """
+    p[0] = p[1]
+
 
 def p_mult_expr(p):
     """
     mult-expr  :  unary-expr
-               | mult-expr (MULT | DIV | MULTPER | DOUBLEPER | MOD) unary-expr
+               | mult-expr mult-sign unary-expr
     """
     if len(p) == 4:
         p[0] = (p[2], p[1], p[3])
     else:
         p[0] = p[1]
 
+
+def p_mult_sign(p):
+    """
+    mult-sign   : MULT
+                | DIV
+                | MULTPER
+                | DOUBLEPER
+                | MOD
+    """
+    p[0] = p[1]
+
+
 def p_unary_expr(p):
     """
     unary-expr  :  postfix-expr
-                  | (MINUS | EXCLAMATION) postfix-expr
+                  | minus-or-excl postfix-expr
     """
     if len(p) == 3:
         p[0] = (p[1], p[2])
     else:
         p[0] = p[1]
+
+
+def p_minus_or_excl(p):
+    """
+    minus-or-excl   : MINUS
+                    | EXCLAMATION
+    """
+    p[0] = p[1]
+
 
 def p_postfix_expr(p):
     """
@@ -743,7 +822,8 @@ def p_array_kv_elem(p):
 
 def p_annotation(p):
     """
-    annotation  :  AT ID | AT kw-expr
+    annotation  :  AT ID
+                | AT kw-expr
     """
     p[0] = (p[1], p[2])
 
@@ -784,12 +864,16 @@ def p_expr_list(p):
     """
     expr-list  :  expr
     """
+    p[0] = p[1]
+
 
 def p_expr_star(p):
     """
     comma-expr-star :
                     | COMMA expr comma-expr-star
     """
+    p[0] = (p[1], p[2], p[3])
+
 
 def p_type_name(p):
     """
@@ -818,7 +902,8 @@ def p_var_name(p):
     """
     var-name  :     ID
     """
-    p[0] = (p[1], p[2])
+    p[0] = p[1]
+
 
 def p_func_name(p):
     """
