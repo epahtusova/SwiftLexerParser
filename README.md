@@ -20,6 +20,7 @@ python main.py
 * *lexer.py* - tokenization of input file
 * *yacc.py* - parsing of tokenized input file
 * *main.py* - start program
+* *out.txt* - JSON representation of AST
 
 
 ### Swift grammar in BNF notation
