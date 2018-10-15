@@ -7,7 +7,7 @@ Yekaterina Pakhtusova
 ### Implementation
 Lexer and parser are implemented in Python using PLY tool.
 
-###How to run a parser
+### How to run a parser
 TBD
 
 
