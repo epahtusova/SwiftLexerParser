@@ -124,12 +124,20 @@ def p_comma_name_star(p):
 def p_formal_arg_list(p):
     """
     formal-arg-list  :
-                     | LPAREN ((formal-arg comma-args-star) | )  RPAREN
+                     | LPAREN opt-formal-args RPAREN
     """
     if p[1] != '':
-        p[0] = ('ARGS', tuple(p[2]))
+        p[0] = ('ARGS', p[2])
     else:
         p[0] = p[1]
+
+def p_opt_formal_args(p):
+    """
+    opt-formal-args :
+                    |   formal-arg comma-args-star
+    """
+    if p[1] !='': p[0] = (p[1], tuple(p[2]))
+    p[0] = p[1]
 
 def p_comma_args_star(p):
     """
@@ -284,9 +292,10 @@ def p_var_decl_rest_star(p):
 
 def p_var_decl_rest(p):
     """
-    var-decl-rest  :  var-name type-suffix ( | var-mapping) ( | (ASSIGN expr))
+    var-decl-rest  :  var-name type-suffix empty-or-var-mappign empty-or-assign-expr
     """
     p[0] = ('VAR_DECL_TAILER', p[1], p[2], p[3], p[4])
+
 
 def p_empty_or_var_mapping(p):
     """
