@@ -142,11 +142,11 @@ def p_swift_func_defn(p):
     swift-func-defn  :  annotation-star func-hdr ARROW block
     """
     p[0] = (p[2], tuple(p[1]), p[4])
-    
+
 def p_annotation_star(p):
     """
-    annotation-star :   
-                    |   annotation annotation-star 
+    annotation-star :
+                    |   annotation annotation-star
     """
     if p[1] != '':
         p[0] = ('ANNOTATION', p[1])
@@ -328,25 +328,32 @@ def p_wait_stmt(p):
     """
     wait-stmt  :  E_WAIT ( | E_DEEP) LPAREN expr-list RPAREN block
     """
+    p[0] = (p[1], p[2], p[3], p[4], p[5], p[6])
 
 def p_foreach_loop(p):
     """
     foreach-loop  :  annotation-star S_FOREACH var-name ( | (COMMA var-name)) S_IN expr block
     """
+    if len(p) == 9:
+        p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])
+    else:
+        p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7])
 
 def p_for_loop(p):
     """
     for-loop  :  annotation-star S_FOR LPAREN for-init-list SEMICOLON expr ; for-update-list RPAREN block
     """
+    p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10])
 
 def p_while_loop(p):
     """
-    while-loop  :   annotation WHILE LPAREN expr RPAREN block
+    while-loop  :   annotation S_WHILE LPAREN expr RPAREN block
     """
+    p[0] = (p[1], p[2], p[4], p[6])
 
 def p_for_init_list(p):
     """
-    for-init-list  :  for-init (COMMAfor-init)*
+    for-init-list  :  for-init (COMMA for-init)*
     """
 
 def p_for_init(p):
@@ -354,6 +361,11 @@ def p_for_init(p):
     for-init  :  for-assignment
               | type-prefix var-name type-suffix ASSIGN expr
     """
+    if len(p) == 6:
+        p[0] = (p[1], p[2], p[3], p[4], p[5])
+    else:
+        p[0] = p[1]
+
 
 def p_for_update_list(p):
     """
