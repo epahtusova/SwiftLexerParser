@@ -1,6 +1,7 @@
 import ply.yacc as yacc
 import lexer
 
+
 tokens = lexer.tokens
 
 
@@ -9,7 +10,6 @@ def p_translation_unit(p):
     translation-unit  :  statement-star
     """
     p[0] = tuple(p[1])
-
 
 def p_statement_star(p):
     """
@@ -20,7 +20,6 @@ def p_statement_star(p):
         p[0] = (p[1], tuple(p[2]))
     else:
         p[0] = p[1]
-
 
 def p_statement(p):
     """
@@ -42,13 +41,11 @@ def p_statement(p):
     """
     p[0] = p[1]
 
-
 def p_global_const_defn(p):
     """
     global-const-defn  :  C_GLOBAL C_CONST var-decl SEMICOLON
     """
     p[0] = ('GLOBAL_CONSTANT', p[3])
-
 
 def p_import_stmt(p):
     """
@@ -57,13 +54,11 @@ def p_import_stmt(p):
     """
     p[0] = ('IMPORT', p[2])
 
-
 def p_module_path(p):
     """
     module-path  :  ID path-star
     """
     p[0] = ('MODULE_PATH', tuple(p[1]))
-
 
 def p_path_star(p):
     """
@@ -75,13 +70,11 @@ def p_path_star(p):
     else:
         p[0] = p[1]
 
-
 def p_pragma_stms(p):
     """
     pragma-stmt  :  C_PRAGMA ID expr  SEMICOLON
     """
     p[0] = ('PRAGMA', p[2], p[3])
-
 
 def p_func_defn(p):
     """
@@ -91,7 +84,6 @@ def p_func_defn(p):
     """
     p[0] = p[1]
 
-
 def p_func_hdr(p):
     """
     func-hdr  :  type-params formal-arg-list func-name empty-or-arg-list
@@ -100,7 +92,6 @@ def p_func_hdr(p):
         p[0] = (p[3], p[4], p[1], p[2])
     else:
         p[0] = (p[3], p[1], p[2])
-
 
 def p_empty_or_arg_list(p):
     """
@@ -120,7 +111,6 @@ def p_type_params(p):
     else:
         p[0] = p[1]
 
-
 def p_comma_name_star(p):
     """
     comma-name-star :
@@ -130,7 +120,6 @@ def p_comma_name_star(p):
         p[0] = ('NAME', p[2], tuple(p[3]))
     else:
         p[0] = p[1]
-
 
 def p_formal_arg_list(p):
     """
@@ -142,7 +131,6 @@ def p_formal_arg_list(p):
     else:
         p[0] = p[1]
 
-
 def p_comma_args_star(p):
     """
     comma-args-star :
@@ -152,7 +140,6 @@ def p_comma_args_star(p):
         p[0] = ('ARGS', p[2], tuple(p[3]))
     else:
         p[0] = p[1]
-
 
 def p_formal_arg(p):
     """
@@ -168,7 +155,6 @@ def p_empty_or_range(p):
     """
     p[0] = p[1]
 
-
 def p_empty_or_ass_expr(p):
     """
     empty-or-ass-expr    :
@@ -176,13 +162,11 @@ def p_empty_or_ass_expr(p):
     """
     p[0] = ('ASSIGN', p[1], p[2])
 
-
 def p_swift_func_defn(p):
     """
     swift-func-defn  :  annotation-star func-hdr ARROW block
     """
     p[0] = (p[2], tuple(p[1]), p[4])
-
 
 def p_annotation_star(p):
     """
@@ -193,7 +177,6 @@ def p_annotation_star(p):
         p[0] = ('ANNOTATION', p[1])
     else:
         p[0] = p[1]
-
 
 def p_app_func_defn(p):
     """
@@ -207,7 +190,6 @@ def p_app_body(p):
     app-body  :  app-arg-expr app-arg-expr-star app-out-star empty-or-semicolon
     """
     p[0] = ('BODY', p[1], tuple(p[2]), tuple(p[3]), p[4])
-
 
 def p_empty_or_semicolon(p):
     """
@@ -254,28 +236,41 @@ def p_foreign_func_defn(p):
     """
     p[0] = (p[2], p[3], tuple(p[1]))
 
-
 def p_foreign_func_body(p):
     """
-    foreign-func-body  :  STR_LITERAL STR_LITERAL ( | STR_LITERAL) ( | (LBRACKET (STR_LITERAL | MUL_STR_LITERAL) RBRACKET))
+    foreign-func-body  :  STR_LITERAL STR_LITERAL empty-or-literal empty-or-more-literals
     """
     p[0] = ('FOREIGN_FUNC', p[1], p[2], p[3], p[4])
 
-
-def p_empty_or_(p):
+def p_empty_or_literal(p):
     """
-    empty-or-semicolon    :
-                          |  SEMICOLON
+    empty-or-literal    :
+                          |  STR_LITERAL
     """
     p[0] = p[1]
 
+def p_empty_or_more_literals(p):
+    """
+    empty-or-more-literals  :
+                            | LBRACKET single-or-multiple-literal  RBRACKET
+    """
+    if len(p)==3:
+        p[0] = (p[2])
+    else:
+        p[0] = p[1]
+
+def p_single_or_multistring_literal(p):
+    """
+    single-or-multiple-literal  : STR_LITERAL
+                                | MUL_STR_LITERAL
+    """
+    p[0] = (p[1])
 
 def p_var_decl(p):
     """
     var-decl  :  type-prefix var-decl-rest
     """
     p[0] = ('VARS_DEC', p[1], tuple(p[2]))
-
 
 def p_var_decl_rest_star(p):
     """
@@ -287,13 +282,27 @@ def p_var_decl_rest_star(p):
     else:
         p[0] = p[1]
 
-
 def p_var_decl_rest(p):
     """
     var-decl-rest  :  var-name type-suffix ( | var-mapping) ( | (ASSIGN expr))
     """
     p[0] = ('VAR_DECL_TAILER', p[1], p[2], p[3], p[4])
 
+def p_empty_or_var_mapping(p):
+    """
+    empty-or-var-mappign :
+                         | var-mapping
+    """
+    p[0] = p[1]
+
+
+def p_empty_or_assign_expr(p):
+    """
+    empty-or-assign-expr    :
+                            | ASSIGN expr
+    """
+    if p[1] != '': p[0] = ('ASSIGN', p[2])
+    else: p[0] = p[1]
 
 def p_type_prefix(p):
     """
@@ -302,24 +311,28 @@ def p_type_prefix(p):
     """
     p[0] = p[1]
 
-
 def p_param_type(p):
     """
     param-type  :  type-name LESS standalone-type GREATER
     """
     p[0] = (p[3], p[1])
 
-
 def p_type_suffix(p):
     """
     type-suffix  :
-                 | (LBRACKET ( | standalone-type) RBRACKET) type_suffix
+                 | LBRACKET empty-or-standalone-type RBRACKET type_suffix
     """
     if p[1] != '':
-        p[0] = ('TYPE_SUFFIX', p[2], p[1], tuple(p[3]))
+        p[0] = ('TYPE_SUFFIX', p[4], tuple(p[2]))
     else:
         p[0] = p[1]
 
+def p_empty_or_standalone_type(p):
+    """
+    empty-or-standalone-type    :
+                                | standalone-type
+    """
+    p[0] = (p[1])
 
 def p_standalone_type(p):
     """
@@ -327,13 +340,11 @@ def p_standalone_type(p):
     """
     p[0] = ('STANDALONE_TYPE', p[1], p[2])
 
-
 def p_var_mapping(p):
     """
     var-mapping  :  LESS expr GREATER
     """
     p[0] = ('VAR_MAPPING', p[1])
-
 
 def p_block(p):
     """
@@ -341,10 +352,9 @@ def p_block(p):
     """
     p[0] = ('CODE_BLOCK', tuple(p[2]))
 
-
 def p_stmt_chain(p):
     """
-    stmt-chain  :  chainable-stmt semicolon-or-arrow statement
+    stmt-chain  :  chainable-stmt ((SEMICOLON | ARROW) statement)
     """
     p[0] = ('STATEMENT_CHAIN', ('STATEMENT', p[2]), p[1])
 
@@ -366,12 +376,22 @@ def p_chainable_stmt(p):
     """
     p[0] = ('CHAINABLE_STMT', p[1])
 
-
 def p_assignment(p):
     """
     assignment  :  lval-or-paren-lval assign-or-plusas expr-list
     """
     p[0] = ('ASSIGNMENT', p[3], p[1], p[2])
+
+
+def p_lval_or_lval_list(p):
+    """
+    lval-or-lval-list   : lval-list
+                        | LPAREN lval-list RPAREN
+    """
+    if len(p) == 1:
+        p[0] = p[1]
+    else:
+        p[0] = (p[2])
 
 
 def p_assign_or_plusas(p):
@@ -399,20 +419,31 @@ def p_update_stmt(p):
     """
     p[0] = ('UPDATE', p[1], p[6])
 
-
 def p_if_stmt(p):
     """
-    if-stmt  :  IF LPAREN expr RPAREN block ( | (ELSE block))
+    if-stmt  :  IF LPAREN expr RPAREN block opt-else-block
     """
     p[0] = ('IF', p[3], p[4], (p[5]))
 
+def p_opt_else_block(p):
+    """
+    opt-else-block   :
+                     |  ELSE block
+    """
+    p[0] = ('ELSE', p[2])
 
 def p_switch_stmt(p):
     """
-    switch-stmt  :  S_SWITCH LPAREN expr RPAREN LBRACE case-star( | default) RBRACE
+    switch-stmt  :  S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-defaultRBRACE
     """
     p[0] = ('SWITCH', p[3], tuple(p[6]), p[7])
 
+def p_opt_default(p):
+    """
+    opt-default :
+                | S_DEFAULT
+    """
+    p[0] = p[1]
 
 def p_case_star(p):
     """
@@ -424,13 +455,11 @@ def p_case_star(p):
     else:
         p[0] = p[1]
 
-
 def p_case(p):
     """
     case  :  S_CASE int-literal COLON statement-star
     """
     p[0] = (p[1], p[2], tuple(p[4]))
-
 
 def p_default(p):
     """
@@ -438,23 +467,35 @@ def p_default(p):
     """
     p[0] = (p[1], tuple(p[3]))
 
-
 def p_wait_stmt(p):
     """
-    wait-stmt  :  E_WAIT ( | E_DEEP) LPAREN expr-list RPAREN block
+    wait-stmt  :  E_WAIT opt-deep LPAREN expr-list RPAREN block
     """
     p[0] = (p[1], p[2], p[3], p[4], p[5], p[6])
 
+def p_opt_deep(p):
+    """
+    opt-deep    :
+                |   E_DEEP
+    """
+    p[0] = p[1]
 
 def p_foreach_loop(p):
     """
-    foreach-loop  :  annotation-star S_FOREACH var-name ( | (COMMA var-name)) S_IN expr block
+    foreach-loop  :  annotation-star S_FOREACH var-name opt-comma-var-name S_IN expr block
     """
-    if len(p) == 9:
+    if len(p) == 8:
         p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])
     else:
         p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7])
 
+def p_opt_comma_var_name(p):
+    """
+    opt-comma-var-name  :
+                        |   COMMA var-name
+    """
+    if p[1] != '': p[0] = (p[2])
+    else: p[0] = p[1]
 
 def p_for_loop(p):
     """
@@ -462,20 +503,17 @@ def p_for_loop(p):
     """
     p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10])
 
-
 def p_while_loop(p):
     """
     while-loop  :   annotation S_WHILE LPAREN expr RPAREN block
     """
     p[0] = (p[1], p[2], p[4], p[6])
 
-
 def p_for_init_list(p):
     """
     for-init-list  :  for-init for-init-star
     """
     p[0] = (p[1], tuple(p[2]))
-
 
 def p_for_init_star(p):
     """
@@ -486,7 +524,6 @@ def p_for_init_star(p):
         p[0] = (p[2], tuple(p[3]))
     else:
         p[0] = p[1]
-
 
 def p_for_init(p):
     """
@@ -505,7 +542,6 @@ def p_for_update_list(p):
     """
     p[0] = (p[1], tuple(p[2]))
 
-
 def p_for_assignment_star(p):
     """
     for-assignment-star :
@@ -516,13 +552,11 @@ def p_for_assignment_star(p):
     else:
         p[0] = p[1]
 
-
 def p_for_assignment(p):
     """
     for-assignment  :  var-name ASSIGN expr
     """
     p[0] = (p[2], p[1], p[3])
-
 
 def p_iterate_loop(p):
     """
@@ -530,13 +564,11 @@ def p_iterate_loop(p):
     """
     p[0] = (p[1], p[2], p[3], p[4], p[6])
 
-
 def p_expr(p):
     """
     expr  :  or-expr
     """
     p[0] = p[1]
-
 
 def p_or_expr(p):
     """
@@ -548,7 +580,6 @@ def p_or_expr(p):
     else:
         p[0] = p[1]
 
-
 def p_and_expr(p):
     """
     and-expr  :  eq-expr
@@ -559,11 +590,10 @@ def p_and_expr(p):
     else:
         p[0] = p[1]
 
-
 def p_eq_expr(p):
     """
     eq-expr  :  cmp-expr
-             | eq-expr eq-or-not-eq eq-expr
+             | eq-expr (EQUAL | NOT_EQUAL) eq-expr
     """
     if len(p) == 4:
         p[0] = (p[2], p[1], p[3])
@@ -671,20 +701,17 @@ def p_postfix_expr(p):
     else:
         p[0] = p[1]
 
-
 def p_array_subscript(p):
     """
     array-subscript  :  LBRACKET expr RBRACKET
     """
     p[0] = p[2]
 
-
 def p_struct_subscript(p):
     """
     struct-subscript  :  DOT ID
     """
     p[0] = (p[1], p[2])
-
 
 def p_base_expr(p):
     """
@@ -700,7 +727,6 @@ def p_base_expr(p):
     else:
         p[0] = p[1]
 
-
 def p_func_call(p):
     """
     func-call  :  annotation-star func-name LPAREN func-call-arg-list RPAREN
@@ -713,7 +739,6 @@ def p_func_call_arg_list(p):
     func-call-arg-list  :  (expr | kw-expr) func-call-arg-star
     """
 
-
 def p_def_expr_star(p):
     """
     func-call-arg-star  :
@@ -724,13 +749,11 @@ def p_def_expr_star(p):
     else:
         p[0] = p[1]
 
-
 def p_tuple_constructor(p):
     """
     tuple-constructor  :  LPAREN expr COMMA expr comma-expr-star RPAREN
     """
     p[0] = ('EXPRESSION_LIST', p[2], p[4], tuple(p[5]))
-
 
 def p_comma_expr_star(p):
     """
@@ -742,7 +765,6 @@ def p_comma_expr_star(p):
     else:
         p[0] = p[1]
 
-
 def p_array_constructor(p):
     """
     array-constructor  :  array-list-constructor
@@ -751,27 +773,46 @@ def p_array_constructor(p):
     """
     p[0] = p[1]
 
-
 def p_array_list_constructor(p):
     """
-    array-list-constructor  :  LBRACKET ( | expr-list) RBRACKET
+    array-list-constructor  :  LBRACKET opt-expr-list RBRACKET
     """
     p[0] = ('ARRAY_CONSTRUCTOR', p[2])
 
+def p_opt_expr_list(p):
+    """
+    opt-expr-list    :
+                     |  expr-list
+    """
+    p[0] = p[1]
 
 def p_array_range_constructor(p):
     """
-    array-range-constructor  :  LBRACKET expr COLON expr ( | (COLON expr)) RBRACKET
+    array-range-constructor  :  LBRACKET expr COLON expr opt-coloned-expr RBRACKET
     """
     p[0] = ('ARRAY_RANGE_CONSTR', p[2], p[4], p[5])
 
+def p_opt_coloned_expr(p):
+    """
+    opt-coloned-expr    :
+                        | COLON expr
+    """
+    if p[1]!='':p[0]=(p[2])
+    else:p[0] = p[1]
 
 def p_array_kv_constructor(p):
     """
-    array-kv-constructor  :  LBRACE ( | (array-kv-elem comma-array-kv-elem-star)) RBRACE
+    array-kv-constructor  :  LBRACE opt-array-constructor RBRACE
     """
-    p[0] = p('ARRAY_KV_CONSTRUCTOR', p[2])
+    p[0] = ('ARRAY_KV_CONSTRUCTOR', p[2])
 
+def p_opt_array_constructor(p):
+    """
+    opt-array-constructor   :
+                            | array-kv-elem comma-array-kv-elem-star
+    """
+    if p[1]!='':p[0]=(p[1], tuple(p[2]))
+    else:p[0] = p[1]
 
 def p_comma_array_kv_elem_star(p):
     """
@@ -783,13 +824,11 @@ def p_comma_array_kv_elem_star(p):
     else:
         p[0] = p[1]
 
-
 def p_array_kv_elem(p):
     """
     array-kv-elem  :  expr COLON expr
     """
     p[0] = (p[2], p[1], p[3])
-
 
 def p_annotation(p):
     """
@@ -798,13 +837,11 @@ def p_annotation(p):
     """
     p[0] = (p[1], p[2])
 
-
 def p_kw_expr(p):
     """
     kw-expr  :  ID ASSIGN expr
     """
     p[0] = (p[2], p[1], p[3])
-
 
 def p_literal(p):
     """
@@ -815,7 +852,6 @@ def p_literal(p):
              | bool-literal
     """
     p[0] = p[1]
-
 
 def p_float_literal(p):
     """
@@ -833,7 +869,6 @@ def p_bool_literal(p):
                   | E_FALSE
     """
     p[0] = p[1]
-
 
 def p_expr_list(p):
     """
@@ -867,13 +902,11 @@ def p_type_name(p):
     """
     p[0] = p[1]
 
-
 def p_const_name(p):
     """
     const-name  :   D_LET ID
     """
     p[0] = (p[1], p[2])
-
 
 def p_var_name(p):
     """
@@ -886,15 +919,13 @@ def p_func_name(p):
     """
     func-name  :  D_FUNCTION ID
     """
-    p[0] = p[1]
-
+    p[0] = (p[1], p[2])
 
 def p_lval_list(p):
     """
     lval-list  :  lval-expr lval-expr-star
     """
     p[0] = ('LVAL_LIST', p[1], tuple(p[2]))
-
 
 def p_lval_expr_star(p):
     """
@@ -906,13 +937,11 @@ def p_lval_expr_star(p):
     else:
         p[0] = p[1]
 
-
 def p_lval_expr(p):
     """
     lval-expr  :  var-name subscript-star
     """
     p[0] = ('LVAL_EXPR', p[1], tuple(p[2]))
-
 
 def p_subscript_star(p):
     """
@@ -925,10 +954,9 @@ def p_subscript_star(p):
     else:
         p[0] = p[1]
 
-
 def p_app_arg_expr(p):
     """
-    app-arg-expr  :  ( | AT) var-name
+    app-arg-expr  :   opt-at var-name
                     | literal
                     | array-constructor
                     | LPAREN expr RPAREN
@@ -940,6 +968,12 @@ def p_app_arg_expr(p):
     else:
         p[0] = p[1]
 
+def p_opt_at(p):
+    """
+    opt-at  :
+            | AT
+    """
+    p[0] = p[1]
 
 parser = yacc.yacc()
 
