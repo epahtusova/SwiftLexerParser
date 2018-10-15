@@ -1,5 +1,9 @@
 // Hello, World! Program
-import Swift
+import Swift;
 if(a==b){
     ;
+}else{
+    while (1 <= 10){
+        Int a = 10
+    }
 }
