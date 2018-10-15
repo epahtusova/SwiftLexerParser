@@ -4,6 +4,6 @@ if(a==b){
     ;
 }else{
     while (1 <= 10){
-        Int a = 10
+        Int a = 10 + 10 * 7
     }
 }

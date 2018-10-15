@@ -74,7 +74,7 @@ def p_path_star(p):
     try:
         p[0] = ('PATH', p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_pragma_stms(p):
     """
@@ -115,7 +115,7 @@ def p_type_params(p):
     try:
         p[0] = ('NAME', p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_comma_name_star(p):
     """
@@ -125,7 +125,7 @@ def p_comma_name_star(p):
     try:
         p[0] = ('NAME', p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_formal_arg_list(p):
     """
@@ -135,7 +135,7 @@ def p_formal_arg_list(p):
     try:
         p[0] = ('ARGS', p[2])
     except:
-        pass
+        p[0] = None
 
 def p_opt_formal_args(p):
     """
@@ -144,7 +144,7 @@ def p_opt_formal_args(p):
     """
     try: p[0] = (p[1], (p[2]))
     except:
-        pass
+        p[0] = None
 
 def p_comma_args_star(p):
     """
@@ -154,7 +154,7 @@ def p_comma_args_star(p):
     try:
         p[0] = ('ARGS', p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_formal_arg(p):
     """
@@ -213,7 +213,7 @@ def p_app_out_star(p):
     try:
         p[0] = ('APP_OUT', (p[2], p[1], p[3]), (p[4]))
     except:
-        pass
+        p[0] = None
 
 
 def p_std_in_out_err(p):
@@ -233,7 +233,7 @@ def p_app_arg_expr_star(p):
     try:
         p[0] = ('APP_ARG_EXPRESSION', p[1], (p[2]))
     except:
-        pass
+        p[0] = None
 
 def p_foreign_func_defn(p):
     """
@@ -285,7 +285,7 @@ def p_var_decl_rest_star(p):
     try:
         p[0] = ('VAR_DECL', p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_var_decl_rest(p):
     """
@@ -298,7 +298,7 @@ def p_empty(p):
     """
     empty :
     """
-    pass
+    p[0] = (None)
 
 def p_empty_or_var_mapping(p):
     """
@@ -308,7 +308,7 @@ def p_empty_or_var_mapping(p):
     try:
         p[0] = p[1]
     except:
-        pass
+        p[0] = None
 
 
 def p_empty_or_assign_expr(p):
@@ -318,7 +318,7 @@ def p_empty_or_assign_expr(p):
     """
     try: p[0] = ('ASSIGN', p[2])
     except:
-        pass
+        p[0] = None
 
 def p_type_prefix(p):
     """
@@ -341,7 +341,7 @@ def p_type_suffix(p):
     try:
         p[0] = ('TYPE_SUFFIX', p[4], (p[2]))
     except:
-        pass
+        p[0] = None
 
 def p_empty_or_standalone_type(p):
     """
@@ -439,7 +439,7 @@ def p_if_stmt(p):
     """
     if-stmt  :  S_IF LPAREN expr RPAREN block opt-else-block
     """
-    p[0] = ('IF', p[3], p[4], p[5])
+    p[0] = ('IF', p[3], p[5], p[6])
 
 def p_opt_else_block(p):
     """
@@ -449,7 +449,7 @@ def p_opt_else_block(p):
     try:
         p[0] = ('ELSE', p[2])
     except:
-        pass
+        p[0] = p[1]
 
 def p_switch_stmt(p):
     """
@@ -472,7 +472,7 @@ def p_case_star(p):
     try:
         p[0] = ('CASES', p[1], (p[2]))
     except:
-        pass
+        p[0] = None
 
 def p_case(p):
     """
@@ -515,7 +515,7 @@ def p_opt_comma_var_name(p):
     """
     try: p[0] = (p[2])
     except:
-        pass
+        p[0] = None
 
 def p_for_loop(p):
     """
@@ -543,7 +543,7 @@ def p_for_init_star(p):
     try:
         p[0] = (p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_for_init(p):
     """
@@ -570,7 +570,7 @@ def p_for_assignment_star(p):
     try:
         p[0] = (p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_for_assignment(p):
     """
@@ -775,7 +775,7 @@ def p_def_expr_star(p):
     try:
         p[0] = (p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_expr_or_kw(p):
     """
@@ -786,7 +786,7 @@ def p_expr_or_kw(p):
     try:
         p[0] = p[1]
     except:
-        pass
+        p[0] = None
 
 def p__constructor(p):
     """
@@ -802,7 +802,7 @@ def p_comma_expr_star(p):
     try:
         p[0] = (p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_array_constructor(p):
     """
@@ -838,7 +838,7 @@ def p_opt_coloned_expr(p):
     """
     try:p[0]=(p[2])
     except:
-        pass
+        p[0] = None
 
 def p_array_kv_constructor(p):
     """
@@ -853,7 +853,7 @@ def p_opt_array_constructor(p):
     """
     try:p[0]=(p[1], (p[2]))
     except:
-        pass
+        p[0] = None
 
 def p_comma_array_kv_elem_star(p):
     """
@@ -863,7 +863,7 @@ def p_comma_array_kv_elem_star(p):
     try:
         p[0] = (p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_array_kv_elem(p):
     """
@@ -954,7 +954,7 @@ def p_lval_expr_star(p):
     try:
         p[0] = (p[2], (p[3]))
     except:
-        pass
+        p[0] = None
 
 def p_lval_expr(p):
     """
@@ -971,7 +971,7 @@ def p_subscript_star(p):
     try:
         p[0] = ('SUBSCRIPT', p[1], (p[2]))
     except:
-        pass
+        p[0] = None
 
 def p_app_arg_expr(p):
     """
