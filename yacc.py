@@ -23,8 +23,7 @@ def p_statement_star(p):
 
 def p_statement(p):
     """
-    statement  :  t_SEMICOLON
-                | new-type-defn
+    statement  :  SEMICOLON
                 | global-const-defn
                 | import-stmt
                 | pragma-stmt
@@ -329,7 +328,7 @@ def p_param_type(p):
 def p_type_suffix(p):
     """
     type-suffix  :
-                 | LBRACKET empty-or-standalone-type RBRACKET type_suffix
+                 | LBRACKET empty-or-standalone-type RBRACKET type-suffix
     """
     if p[1] != '':
         p[0] = ('TYPE_SUFFIX', p[4], tuple(p[2]))
@@ -357,7 +356,7 @@ def p_var_mapping(p):
 
 def p_block(p):
     """
-    block  :  LBRACE statement-star RBRACE
+    block  :  LBRACE translation-unit RBRACE
     """
     p[0] = ('CODE_BLOCK', tuple(p[2]))
 
@@ -430,20 +429,20 @@ def p_update_stmt(p):
 
 def p_if_stmt(p):
     """
-    if-stmt  :  IF LPAREN expr RPAREN block opt-else-block
+    if-stmt  :  S_IF LPAREN expr RPAREN block opt-else-block
     """
     p[0] = ('IF', p[3], p[4], (p[5]))
 
 def p_opt_else_block(p):
     """
     opt-else-block   :
-                     |  ELSE block
+                     |  S_ELSE block
     """
     p[0] = ('ELSE', p[2])
 
 def p_switch_stmt(p):
     """
-    switch-stmt  :  S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-defaultRBRACE
+    switch-stmt  :  S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-default RBRACE
     """
     p[0] = ('SWITCH', p[3], tuple(p[6]), p[7])
 
@@ -466,13 +465,13 @@ def p_case_star(p):
 
 def p_case(p):
     """
-    case  :  S_CASE int-literal COLON statement-star
+    case  :  S_CASE INT COLON translation-unit
     """
     p[0] = (p[1], p[2], tuple(p[4]))
 
 def p_default(p):
     """
-    default  :  S_DEFAULT COLON statement-star
+    default  :  S_DEFAULT COLON translation-unit
     """
     p[0] = (p[1], tuple(p[3]))
 
@@ -703,12 +702,19 @@ def p_minus_or_excl(p):
 def p_postfix_expr(p):
     """
     postfix-expr  :  base-expr
-                  | postfix-expr (array-subscript | struct-subscript)
+                  | postfix-expr array-or-struct
     """
     if len(p) == 3:
         p[0] = (p[1], p[2])
     else:
         p[0] = p[1]
+
+def p_array_or_struct(p):
+    """
+    array-or-struct : array-subscript
+                    | struct-subscript
+    """
+    p[0] = p[1]
 
 def p_array_subscript(p):
     """
@@ -745,18 +751,26 @@ def p_func_call(p):
 
 def p_func_call_arg_list(p):
     """
-    func-call-arg-list  :  (expr | kw-expr) func-call-arg-star
+    func-call-arg-list  :  expr-or-kw func-call-arg-star
     """
+    p[0] = ('ARGS_CALL_LIST', p[0], tuple(p[2]))
 
 def p_def_expr_star(p):
     """
     func-call-arg-star  :
-                        |   COMMA (expr | kw-expr) func-call-arg-star
+                        |   COMMA expr-or-kw func-call-arg-star
     """
     if p[1] != '':
         p[0] = (p[2], tuple(p[3]))
     else:
         p[0] = p[1]
+
+def p_expr_or_kw(p):
+    """
+    expr-or-kw  :   expr
+                |   kw-expr
+    """
+    p[0] = p[1]
 
 def p_tuple_constructor(p):
     """
@@ -856,7 +870,7 @@ def p_literal(p):
     """
     literal  :  STR_LITERAL
              | MUL_STR_LITERAL
-             | int-literal
+             | INT
              | float-literal
              | bool-literal
     """
@@ -864,8 +878,7 @@ def p_literal(p):
 
 def p_float_literal(p):
     """
-    float-literal  :  DOUBLE
-                     | DOUBLE
+    float-literal  :   DOUBLE
                      | INF
                      | NAN
     """
@@ -886,14 +899,6 @@ def p_expr_list(p):
     p[0] = p[1]
 
 
-def p_expr_star(p):
-    """
-    comma-expr-star :
-                    | COMMA expr comma-expr-star
-    """
-    p[0] = (p[1], p[2], p[3])
-
-
 def p_type_name(p):
     """
     type-name  :  class_INT
@@ -907,7 +912,7 @@ def p_type_name(p):
                | collection_SET
                | collection_ARRAY
                | collection_DICT
-               | id
+               | ID
     """
     p[0] = p[1]
 
