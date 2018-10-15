@@ -1,17 +1,28 @@
 # Swift Parser
 
-### Team:
-Vitaly Volobuev
-Yekaterina Pakhtusova
+### Team
+* Vitaly Volobuev
+* Yekaterina Pakhtusova
 
 ### Implementation
-Lexer and parser are implemented in Python using PLY tool.
+Lexer and parser are implemented in Python using PLY. PLY is an implementation of lex and yacc parsing tools for Python.
+ In a nutshell, PLY is nothing more than a straightforward lex/yacc implementation.
 
 ### How to run a parser
-TBD
+One can run our program from CLI by typing
+```
+python main.py
+```
+
+### File Structure
+* *in.txt*  - Swift code for parsing
+* *preprocess_comments.py* - remove comments from code, as in Swift they are meaningless
+* *lexer.py* - tokenization of input file
+* *yacc.py* - parsing of tokenized input file
+* *main.py* - start program
 
 
-###Swift grammar in BNF notation:
+### Swift grammar in BNF notation
 It is a subset of Swift grammar required to implement the esseintial requirements for the homework.
 ```
 <translation-unit> ::= <statement>*
