@@ -100,6 +100,7 @@ def p_empty_or_arg_list(p):
     """
     p[0] = p[1]
 
+
 def p_type_params(p):
     """
     type-params  :
@@ -237,6 +238,7 @@ def p_empty_or_(p):
                           |  SEMICOLON
     """
     p[0] = p[1]
+
 
 def p_var_decl(p):
     """
@@ -668,7 +670,8 @@ def p_float_literal(p):
     """
     p[0] = p[1]
 
-def  p_bool_literal(p):
+
+def p_bool_literal(p):
     """
     bool-literal  :  E_TRUE
                   | E_FALSE
@@ -768,6 +771,14 @@ def p_app_arg_expr(p):
     else:
         p[0] = p[1]
 
-yacc.yacc()
-filename = ''
-data = open(filename, 'r').readlines()
+
+parser = yacc.yacc()
+
+
+def parse(data, debug=0):
+    parser.error = 0
+    p = parser.parse(data, debug=debug)
+    if parser.error:
+        print('Error occurred during parsing stage')
+        return None
+    return p

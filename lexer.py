@@ -2,9 +2,6 @@ import ply.lex as lex
 from preprocess_comments import format_inline_comment, format_multiline_comment
 
 reserved = {
-    'if': 'IF',
-    'else': 'ELSE',
-    'while': 'WHILE',
     # DECLARATIONS
     'associatedtype': 'D_ASSOCIATED_TYPE',
     'deinit': 'D_DEINIT',
@@ -201,10 +198,10 @@ def t_MUL_STR_LITERAL(t):
     r'"""([^"\n]|(\\")|\n)*"""'
     return t
 
+
 def t_STR_LITERAL(t):
     r'"([^"\n]|(\\"))*"'
     return t
-
 
 
 def t_DOUBLE(t):
@@ -233,20 +230,25 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-lexer = lex.lex()
+lexer = lex.lex(debug=0)
 
-# Give the lexer some input
-file = open('in.txt', 'r', encoding='utf8')
-data = file.read()
-data = format_multiline_comment(data)
-data = format_inline_comment(data)
-print(data)
-print('#' * 20)
-lexer.input(data)
 
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok:
-        break  # No more input
-    print(tok)
+def tokenize():
+    # Give the lexer some input
+    file = open('in.txt', 'r', encoding='utf8')
+    data = file.read()
+    data = format_multiline_comment(data)
+    data = format_inline_comment(data)
+    print(data)
+    print('#' * 20)
+    lexer.input(data)
+
+    # Tokenize
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break  # No more input
+        print(tok)
+
+
+# tokenize()
