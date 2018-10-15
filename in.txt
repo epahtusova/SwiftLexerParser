@@ -1,9 +1,17 @@
 // Hello, World! Program
+func foo(a:Int) -> {
+    print(a)
+}
+
 import Swift;
 if(a==b){
-    ;
-}else{
-    while (1 <= 10){
-        Int a = 10 + 10 * 7
+    while(0 < 10){
+        Int a = 8*6+4-12
+        foo()
     }
+}else{
+    for(i=5;i<10;i=i+1){
+        print("HELLO KATYA")
+    }
+
 }

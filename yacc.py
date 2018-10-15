@@ -92,12 +92,9 @@ def p_func_defn(p):
 
 def p_func_hdr(p):
     """
-    func-hdr  :  type-params formal-arg-list ID empty-or-arg-list
+    func-hdr  : D_FUNCTION ID formal-arg-list ID empty-or-arg-list
     """
-    if p[4] != '':
-        p[0] = (p[3], p[4], p[1], p[2])
-    else:
-        p[0] = (p[3], p[1], p[2])
+    p[0] = (p[3], p[1], p[2], p[4])
 
 def p_empty_or_arg_list(p):
     """
@@ -120,7 +117,7 @@ def p_type_params(p):
 def p_comma_name_star(p):
     """
     comma-name-star : COMMA var-name comma-name-star
-	|
+	| empty
     """
     try:
         p[0] = ('NAME', p[2], (p[3]))
@@ -158,7 +155,7 @@ def p_comma_args_star(p):
 
 def p_formal_arg(p):
     """
-    formal-arg  :  type-prefix empty-or-range var-name type-suffix empty-or-ass-expr
+    formal-arg  :  empty-or-range var-name  type-prefix
     """
     p[0] = ('ARG', p[1], p[3], p[4], p[2], p[5])
 
@@ -166,7 +163,7 @@ def p_formal_arg(p):
 def p_empty_or_range(p):
     """
     empty-or-range    : RANGE
-	| empty
+	                    | empty
     """
     p[0] = p[1]
 
@@ -336,7 +333,7 @@ def p_param_type(p):
 def p_type_suffix(p):
     """
     type-suffix  : LBRACKET empty-or-standalone-type RBRACKET type-suffix
-	|
+	| empty
     """
     try:
         p[0] = ('TYPE_SUFFIX', p[4], (p[2]))
@@ -345,8 +342,8 @@ def p_type_suffix(p):
 
 def p_empty_or_standalone_type(p):
     """
-    empty-or-standalone-type    : standalone-type
-	|
+    empty-or-standalone-type : standalone-type
+	| empty
     """
     p[0] = (p[1])
 
@@ -521,7 +518,7 @@ def p_for_loop(p):
     """
     for-loop  :   S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-update-list RPAREN block
     """
-    p[0] = (p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10])
+    p[0] = ('FOR_LOOP', p[3], p[5], p[7], p[9])
 
 def p_while_loop(p):
     """
@@ -538,7 +535,7 @@ def p_for_init_list(p):
 def p_for_init_star(p):
     """
     for-init-star   : COMMA for-init for-init-star
-	| empty
+	                | empty
     """
     try:
         p[0] = (p[2], (p[3]))
@@ -565,7 +562,7 @@ def p_for_update_list(p):
 def p_for_assignment_star(p):
     """
     for-assignment-star : COMMA for-assignment for-assignment-star
-	|
+	| empty
     """
     try:
         p[0] = (p[2], (p[3]))
