@@ -719,6 +719,13 @@ def p_app_arg_expr(p):
         p[0] = p[1]
 
 
-yacc.yacc()
-filename = ''
-data = open(filename, 'r').readlines()
+parser = yacc.yacc()
+
+
+def parse(data, debug=0):
+    parser.error = 0
+    p = parser.parse(data, debug=debug)
+    if parser.error:
+        print('Error occurred during parsing stage')
+        return None
+    return p
