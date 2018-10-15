@@ -215,7 +215,7 @@ Rule 109   switch-stmt -> S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-defau
 Rule 110   opt-default -> S_DEFAULT
 Rule 111   opt-default -> empty
 Rule 112   case-star -> case case-star
-Rule 113   case-star -> <empty>
+Rule 113   case-star -> empty
 Rule 114   case -> S_CASE INT COLON translation-unit
 Rule 115   default -> S_DEFAULT COLON translation-unit
 Rule 116   wait-stmt -> E_WAIT opt-deep LPAREN expr-list RPAREN block
@@ -228,7 +228,7 @@ Rule 122   for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-u
 Rule 123   while-loop -> S_WHILE LPAREN expr RPAREN block
 Rule 124   for-init-list -> for-init for-init-star
 Rule 125   for-init-star -> COMMA for-init for-init-star
-Rule 126   for-init-star -> <empty>
+Rule 126   for-init-star -> empty
 Rule 127   for-init -> for-assignment
 Rule 128   for-init -> type-prefix var-name type-suffix ASSIGN expr
 Rule 129   for-update-list -> for-assignment for-assignment-star
@@ -552,7 +552,7 @@ comma-expr-star      : 184 185
 comma-name-star      : 37 39
 const-name           : 
 default              : 
-empty                : 3 36 38 42 44 46 49 51 56 67 69 78 80 108 111 118 121 180 183 186 192 195 198 200 234 240
+empty                : 3 36 38 42 44 46 49 51 56 67 69 78 80 108 111 113 118 121 126 180 183 186 192 195 198 200 234 240
 empty-or-arg-list    : 34
 empty-or-ass-expr    : 47
 empty-or-assign-expr : 75
@@ -6902,12 +6902,14 @@ state 173
 
     (124) for-init-list -> for-init . for-init-star
     (125) for-init-star -> . COMMA for-init for-init-star
-    (126) for-init-star -> .
+    (126) for-init-star -> . empty
+    (76) empty -> .
 
     COMMA           shift and go to state 249
-    SEMICOLON       reduce using rule 126 (for-init-star -> .)
+    SEMICOLON       reduce using rule 76 (empty -> .)
 
     for-init-star                  shift and go to state 248
+    empty                          shift and go to state 250
 
 state 174
 
@@ -6924,13 +6926,13 @@ state 175
 
     ID              shift and go to state 82
 
-    var-name                       shift and go to state 250
+    var-name                       shift and go to state 251
 
 state 176
 
     (132) for-assignment -> var-name . ASSIGN expr
 
-    ASSIGN          shift and go to state 251
+    ASSIGN          shift and go to state 252
 
 
 state 177
@@ -6952,7 +6954,7 @@ state 178
     (76) empty -> .
 
   ! shift/reduce conflict for LESS resolved as shift
-    LESS            shift and go to state 255
+    LESS            shift and go to state 256
     ASSIGN          reduce using rule 76 (empty -> .)
     SEMICOLON       reduce using rule 76 (empty -> .)
     C_GLOBAL        reduce using rule 76 (empty -> .)
@@ -6989,9 +6991,9 @@ state 178
 
   ! LESS            [ reduce using rule 76 (empty -> .) ]
 
-    empty-or-var-mapping           shift and go to state 252
-    var-mapping                    shift and go to state 253
-    empty                          shift and go to state 254
+    empty-or-var-mapping           shift and go to state 253
+    var-mapping                    shift and go to state 254
+    empty                          shift and go to state 255
 
 state 179
 
@@ -7029,8 +7031,8 @@ state 179
     collection_DICT shift and go to state 62
     ID              shift and go to state 152
 
-    empty-or-standalone-type       shift and go to state 256
-    standalone-type                shift and go to state 257
+    empty-or-standalone-type       shift and go to state 257
+    standalone-type                shift and go to state 258
     type-prefix                    shift and go to state 192
     type-name                      shift and go to state 48
     param-type                     shift and go to state 49
@@ -7039,14 +7041,14 @@ state 180
 
     (123) while-loop -> S_WHILE LPAREN expr . RPAREN block
 
-    RPAREN          shift and go to state 258
+    RPAREN          shift and go to state 259
 
 
 state 181
 
     (133) iterate-loop -> S_ITERATE var-name block . S_UNTIL LPAREN expr RPAREN
 
-    S_UNTIL         shift and go to state 259
+    S_UNTIL         shift and go to state 260
 
 
 state 182
@@ -7214,7 +7216,7 @@ state 186
 
     (37) type-params -> LESS var-name comma-name-star . GREATER
 
-    GREATER         shift and go to state 260
+    GREATER         shift and go to state 261
 
 
 state 187
@@ -7224,7 +7226,7 @@ state 187
 
     ID              shift and go to state 82
 
-    var-name                       shift and go to state 261
+    var-name                       shift and go to state 262
 
 state 188
 
@@ -7271,7 +7273,7 @@ state 189
     (67) empty-or-literal -> . empty
     (76) empty -> .
 
-    STR_LITERAL     shift and go to state 262
+    STR_LITERAL     shift and go to state 263
     LBRACKET        reduce using rule 76 (empty -> .)
     SEMICOLON       reduce using rule 76 (empty -> .)
     C_GLOBAL        reduce using rule 76 (empty -> .)
@@ -7306,8 +7308,8 @@ state 189
     S_CASE          reduce using rule 76 (empty -> .)
     S_DEFAULT       reduce using rule 76 (empty -> .)
 
-    empty-or-literal               shift and go to state 263
-    empty                          shift and go to state 264
+    empty-or-literal               shift and go to state 264
+    empty                          shift and go to state 265
 
 state 190
 
@@ -7337,8 +7339,8 @@ state 190
     (193) array-range-constructor -> . LBRACKET expr COLON expr opt-coloned-expr RBRACKET
     (196) array-kv-constructor -> . LBRACE opt-array-constructor RBRACE
 
-    LPAREN          shift and go to state 270
-    AT              shift and go to state 271
+    LPAREN          shift and go to state 271
+    AT              shift and go to state 272
     STR_LITERAL     shift and go to state 135
     MUL_STR_LITERAL shift and go to state 136
     INT             shift and go to state 137
@@ -7351,12 +7353,12 @@ state 190
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    app-body                       shift and go to state 265
-    app-arg-expr                   shift and go to state 266
-    opt-at                         shift and go to state 267
-    literal                        shift and go to state 268
-    array-constructor              shift and go to state 269
-    empty                          shift and go to state 272
+    app-body                       shift and go to state 266
+    app-arg-expr                   shift and go to state 267
+    opt-at                         shift and go to state 268
+    literal                        shift and go to state 269
+    array-constructor              shift and go to state 270
+    empty                          shift and go to state 273
     float-literal                  shift and go to state 138
     bool-literal                   shift and go to state 139
     array-list-constructor         shift and go to state 141
@@ -7367,7 +7369,7 @@ state 191
 
     (83) param-type -> type-name LESS standalone-type . GREATER
 
-    GREATER         shift and go to state 273
+    GREATER         shift and go to state 274
 
 
 state 192
@@ -7380,7 +7382,7 @@ state 192
     GREATER         reduce using rule 85 (type-suffix -> .)
     RBRACKET        reduce using rule 85 (type-suffix -> .)
 
-    type-suffix                    shift and go to state 274
+    type-suffix                    shift and go to state 275
 
 state 193
 
@@ -7396,15 +7398,15 @@ state 193
     STR_LITERAL     reduce using rule 76 (empty -> .)
     LBRACE          reduce using rule 76 (empty -> .)
 
-    formal-arg-list                shift and go to state 275
-    empty-or-arg-list              shift and go to state 276
-    empty                          shift and go to state 277
+    formal-arg-list                shift and go to state 276
+    empty-or-arg-list              shift and go to state 277
+    empty                          shift and go to state 278
 
 state 194
 
     (41) formal-arg-list -> LPAREN opt-formal-args . RPAREN
 
-    RPAREN          shift and go to state 278
+    RPAREN          shift and go to state 279
 
 
 state 195
@@ -7414,11 +7416,11 @@ state 195
     (46) comma-args-star -> . empty
     (76) empty -> .
 
-    COMMA           shift and go to state 280
+    COMMA           shift and go to state 281
     RPAREN          reduce using rule 76 (empty -> .)
 
-    comma-args-star                shift and go to state 279
-    empty                          shift and go to state 281
+    comma-args-star                shift and go to state 280
+    empty                          shift and go to state 282
 
 state 196
 
@@ -7434,11 +7436,11 @@ state 197
     (49) empty-or-range -> . empty
     (76) empty -> .
 
-    RANGE           shift and go to state 283
+    RANGE           shift and go to state 284
     ID              reduce using rule 76 (empty -> .)
 
-    empty-or-range                 shift and go to state 282
-    empty                          shift and go to state 284
+    empty-or-range                 shift and go to state 283
+    empty                          shift and go to state 285
 
 state 198
 
@@ -7451,20 +7453,20 @@ state 198
     PLUS_AS         reduce using rule 230 (lval-expr-star -> .)
     RPAREN          reduce using rule 230 (lval-expr-star -> .)
 
-    lval-expr-star                 shift and go to state 285
+    lval-expr-star                 shift and go to state 286
 
 state 199
 
     (105) update-stmt -> var-name LESS ID GREATER . UPD expr SEMICOLON
 
-    UPD             shift and go to state 286
+    UPD             shift and go to state 287
 
 
 state 200
 
     (190) array-list-constructor -> LBRACKET opt-expr-list . RBRACKET
 
-    RBRACKET        shift and go to state 287
+    RBRACKET        shift and go to state 288
 
 
 state 201
@@ -7472,7 +7474,7 @@ state 201
     (193) array-range-constructor -> LBRACKET expr . COLON expr opt-coloned-expr RBRACKET
     (213) expr-list -> expr .
 
-    COLON           shift and go to state 288
+    COLON           shift and go to state 289
     RBRACKET        reduce using rule 213 (expr-list -> expr .)
 
 
@@ -7614,7 +7616,7 @@ state 205
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    and-expr                       shift and go to state 289
+    and-expr                       shift and go to state 290
     eq-expr                        shift and go to state 119
     cmp-expr                       shift and go to state 120
     add-expr                       shift and go to state 121
@@ -7692,7 +7694,7 @@ state 206
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    eq-expr                        shift and go to state 290
+    eq-expr                        shift and go to state 291
     cmp-expr                       shift and go to state 120
     add-expr                       shift and go to state 121
     mult-expr                      shift and go to state 122
@@ -7769,7 +7771,7 @@ state 207
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    eq-expr                        shift and go to state 291
+    eq-expr                        shift and go to state 292
     cmp-expr                       shift and go to state 120
     add-expr                       shift and go to state 121
     mult-expr                      shift and go to state 122
@@ -7882,7 +7884,7 @@ state 210
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    add-expr                       shift and go to state 292
+    add-expr                       shift and go to state 293
     mult-expr                      shift and go to state 122
     unary-expr                     shift and go to state 123
     postfix-expr                   shift and go to state 124
@@ -8051,7 +8053,7 @@ state 216
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    mult-expr                      shift and go to state 293
+    mult-expr                      shift and go to state 294
     unary-expr                     shift and go to state 123
     postfix-expr                   shift and go to state 124
     minus-or-excl                  shift and go to state 125
@@ -8157,7 +8159,7 @@ state 219
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    unary-expr                     shift and go to state 294
+    unary-expr                     shift and go to state 295
     postfix-expr                   shift and go to state 124
     minus-or-excl                  shift and go to state 125
     base-expr                      shift and go to state 126
@@ -8533,15 +8535,15 @@ state 229
     (174) base-expr -> LPAREN expr . RPAREN
     (184) -constructor -> LPAREN expr . COMMA expr comma-expr-star RPAREN
 
-    RPAREN          shift and go to state 295
-    COMMA           shift and go to state 296
+    RPAREN          shift and go to state 296
+    COMMA           shift and go to state 297
 
 
 state 230
 
     (196) array-kv-constructor -> LBRACE opt-array-constructor . RBRACE
 
-    RBRACE          shift and go to state 297
+    RBRACE          shift and go to state 298
 
 
 state 231
@@ -8551,11 +8553,11 @@ state 231
     (200) comma-array-kv-elem-star -> . empty
     (76) empty -> .
 
-    COMMA           shift and go to state 299
+    COMMA           shift and go to state 300
     RBRACE          reduce using rule 76 (empty -> .)
 
-    comma-array-kv-elem-star       shift and go to state 298
-    empty                          shift and go to state 300
+    comma-array-kv-elem-star       shift and go to state 299
+    empty                          shift and go to state 301
 
 state 232
 
@@ -8568,7 +8570,7 @@ state 233
 
     (201) array-kv-elem -> expr . COLON expr
 
-    COLON           shift and go to state 301
+    COLON           shift and go to state 302
 
 
 state 234
@@ -8618,7 +8620,7 @@ state 235
     DOT             shift and go to state 156
     SEMICOLON       reduce using rule 29 (path-star -> .)
 
-    path-star                      shift and go to state 302
+    path-star                      shift and go to state 303
 
 state 236
 
@@ -8721,7 +8723,7 @@ state 237
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 303
+    expr                           shift and go to state 304
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -8882,7 +8884,7 @@ state 240
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr-or-kw                     shift and go to state 304
+    expr-or-kw                     shift and go to state 305
     expr                           shift and go to state 161
     kw-expr                        shift and go to state 162
     empty                          shift and go to state 163
@@ -8921,20 +8923,20 @@ state 242
 
     LBRACE          shift and go to state 32
 
-    block                          shift and go to state 305
+    block                          shift and go to state 306
 
 state 243
 
     (109) switch-stmt -> S_SWITCH LPAREN expr RPAREN . LBRACE case-star opt-default RBRACE
 
-    LBRACE          shift and go to state 306
+    LBRACE          shift and go to state 307
 
 
 state 244
 
     (116) wait-stmt -> E_WAIT opt-deep LPAREN expr-list . RPAREN block
 
-    RPAREN          shift and go to state 307
+    RPAREN          shift and go to state 308
 
 
 state 245
@@ -9001,7 +9003,7 @@ state 245
     LBRACE          shift and go to state 149
 
     var-name                       shift and go to state 131
-    expr                           shift and go to state 308
+    expr                           shift and go to state 309
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -9092,7 +9094,7 @@ state 247
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 309
+    expr                           shift and go to state 310
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -9157,7 +9159,7 @@ state 249
     collection_ARRAY shift and go to state 61
     collection_DICT shift and go to state 62
 
-    for-init                       shift and go to state 310
+    for-init                       shift and go to state 311
     for-assignment                 shift and go to state 174
     type-prefix                    shift and go to state 175
     var-name                       shift and go to state 176
@@ -9166,6 +9168,13 @@ state 249
 
 state 250
 
+    (126) for-init-star -> empty .
+
+    SEMICOLON       reduce using rule 126 (for-init-star -> empty .)
+
+
+state 251
+
     (128) for-init -> type-prefix var-name . type-suffix ASSIGN expr
     (84) type-suffix -> . LBRACKET empty-or-standalone-type RBRACKET type-suffix
     (85) type-suffix -> .
@@ -9173,9 +9182,9 @@ state 250
     LBRACKET        shift and go to state 179
     ASSIGN          reduce using rule 85 (type-suffix -> .)
 
-    type-suffix                    shift and go to state 311
+    type-suffix                    shift and go to state 312
 
-state 251
+state 252
 
     (132) for-assignment -> var-name ASSIGN . expr
     (134) expr -> . or-expr
@@ -9239,7 +9248,7 @@ state 251
     LBRACE          shift and go to state 149
 
     var-name                       shift and go to state 131
-    expr                           shift and go to state 312
+    expr                           shift and go to state 313
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -9260,14 +9269,14 @@ state 251
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 252
+state 253
 
     (75) var-decl-rest -> var-name type-suffix empty-or-var-mapping . empty-or-assign-expr
     (79) empty-or-assign-expr -> . ASSIGN expr
     (80) empty-or-assign-expr -> . empty
     (76) empty -> .
 
-    ASSIGN          shift and go to state 314
+    ASSIGN          shift and go to state 315
     SEMICOLON       reduce using rule 76 (empty -> .)
     C_GLOBAL        reduce using rule 76 (empty -> .)
     D_IMPORT        reduce using rule 76 (empty -> .)
@@ -9302,10 +9311,10 @@ state 252
     S_CASE          reduce using rule 76 (empty -> .)
     S_DEFAULT       reduce using rule 76 (empty -> .)
 
-    empty-or-assign-expr           shift and go to state 313
-    empty                          shift and go to state 315
+    empty-or-assign-expr           shift and go to state 314
+    empty                          shift and go to state 316
 
-state 253
+state 254
 
     (77) empty-or-var-mapping -> var-mapping .
 
@@ -9345,7 +9354,7 @@ state 253
     S_DEFAULT       reduce using rule 77 (empty-or-var-mapping -> var-mapping .)
 
 
-state 254
+state 255
 
     (78) empty-or-var-mapping -> empty .
 
@@ -9385,7 +9394,7 @@ state 254
     S_DEFAULT       reduce using rule 78 (empty-or-var-mapping -> empty .)
 
 
-state 255
+state 256
 
     (89) var-mapping -> LESS . expr GREATER
     (134) expr -> . or-expr
@@ -9448,7 +9457,7 @@ state 255
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 316
+    expr                           shift and go to state 317
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -9470,37 +9479,37 @@ state 255
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 256
+state 257
 
     (84) type-suffix -> LBRACKET empty-or-standalone-type . RBRACKET type-suffix
 
-    RBRACKET        shift and go to state 317
+    RBRACKET        shift and go to state 318
 
 
-state 257
+state 258
 
     (86) empty-or-standalone-type -> standalone-type .
 
     RBRACKET        reduce using rule 86 (empty-or-standalone-type -> standalone-type .)
 
 
-state 258
+state 259
 
     (123) while-loop -> S_WHILE LPAREN expr RPAREN . block
     (90) block -> . LBRACE translation-unit RBRACE
 
     LBRACE          shift and go to state 32
 
-    block                          shift and go to state 318
+    block                          shift and go to state 319
 
-state 259
+state 260
 
     (133) iterate-loop -> S_ITERATE var-name block S_UNTIL . LPAREN expr RPAREN
 
-    LPAREN          shift and go to state 319
+    LPAREN          shift and go to state 320
 
 
-state 260
+state 261
 
     (37) type-params -> LESS var-name comma-name-star GREATER .
 
@@ -9508,7 +9517,7 @@ state 260
     ID              reduce using rule 37 (type-params -> LESS var-name comma-name-star GREATER .)
 
 
-state 261
+state 262
 
     (39) comma-name-star -> COMMA var-name . comma-name-star
     (39) comma-name-star -> . COMMA var-name comma-name-star
@@ -9517,9 +9526,9 @@ state 261
     COMMA           shift and go to state 187
     GREATER         reduce using rule 40 (comma-name-star -> .)
 
-    comma-name-star                shift and go to state 320
+    comma-name-star                shift and go to state 321
 
-state 262
+state 263
 
     (66) empty-or-literal -> STR_LITERAL .
 
@@ -9558,14 +9567,14 @@ state 262
     S_DEFAULT       reduce using rule 66 (empty-or-literal -> STR_LITERAL .)
 
 
-state 263
+state 264
 
     (65) foreign-func-body -> STR_LITERAL STR_LITERAL empty-or-literal . empty-or-more-literals
     (68) empty-or-more-literals -> . LBRACKET single-or-multiple-literal RBRACKET
     (69) empty-or-more-literals -> . empty
     (76) empty -> .
 
-    LBRACKET        shift and go to state 322
+    LBRACKET        shift and go to state 323
     SEMICOLON       reduce using rule 76 (empty -> .)
     C_GLOBAL        reduce using rule 76 (empty -> .)
     D_IMPORT        reduce using rule 76 (empty -> .)
@@ -9599,10 +9608,10 @@ state 263
     S_CASE          reduce using rule 76 (empty -> .)
     S_DEFAULT       reduce using rule 76 (empty -> .)
 
-    empty-or-more-literals         shift and go to state 321
-    empty                          shift and go to state 323
+    empty-or-more-literals         shift and go to state 322
+    empty                          shift and go to state 324
 
-state 264
+state 265
 
     (67) empty-or-literal -> empty .
 
@@ -9641,14 +9650,14 @@ state 264
     S_DEFAULT       reduce using rule 67 (empty-or-literal -> empty .)
 
 
-state 265
+state 266
 
     (53) app-func-defn -> C_APP func-hdr LBRACE app-body . RBRACE
 
-    RBRACE          shift and go to state 324
+    RBRACE          shift and go to state 325
 
 
-state 266
+state 267
 
     (54) app-body -> app-arg-expr . app-arg-expr-star app-out-star empty-or-semicolon
     (62) app-arg-expr-star -> . app-arg-expr app-arg-expr-star
@@ -9682,8 +9691,8 @@ state 266
     E_STDERR        reduce using rule 63 (app-arg-expr-star -> .)
     SEMICOLON       reduce using rule 63 (app-arg-expr-star -> .)
     RBRACE          reduce using rule 63 (app-arg-expr-star -> .)
-    LPAREN          shift and go to state 270
-    AT              shift and go to state 271
+    LPAREN          shift and go to state 271
+    AT              shift and go to state 272
     STR_LITERAL     shift and go to state 135
     MUL_STR_LITERAL shift and go to state 136
     INT             shift and go to state 137
@@ -9696,28 +9705,28 @@ state 266
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    app-arg-expr                   shift and go to state 325
-    app-arg-expr-star              shift and go to state 326
-    opt-at                         shift and go to state 267
-    literal                        shift and go to state 268
-    array-constructor              shift and go to state 269
-    empty                          shift and go to state 272
+    app-arg-expr                   shift and go to state 326
+    app-arg-expr-star              shift and go to state 327
+    opt-at                         shift and go to state 268
+    literal                        shift and go to state 269
+    array-constructor              shift and go to state 270
+    empty                          shift and go to state 273
     float-literal                  shift and go to state 138
     bool-literal                   shift and go to state 139
     array-list-constructor         shift and go to state 141
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 267
+state 268
 
     (235) app-arg-expr -> opt-at . var-name
     (227) var-name -> . ID
 
     ID              shift and go to state 82
 
-    var-name                       shift and go to state 327
+    var-name                       shift and go to state 328
 
-state 268
+state 269
 
     (236) app-arg-expr -> literal .
 
@@ -9741,7 +9750,7 @@ state 268
     RBRACE          reduce using rule 236 (app-arg-expr -> literal .)
 
 
-state 269
+state 270
 
     (237) app-arg-expr -> array-constructor .
 
@@ -9765,7 +9774,7 @@ state 269
     RBRACE          reduce using rule 237 (app-arg-expr -> array-constructor .)
 
 
-state 270
+state 271
 
     (238) app-arg-expr -> LPAREN . expr RPAREN
     (134) expr -> . or-expr
@@ -9828,7 +9837,7 @@ state 270
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 328
+    expr                           shift and go to state 329
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -9850,21 +9859,21 @@ state 270
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 271
+state 272
 
     (239) opt-at -> AT .
 
     ID              reduce using rule 239 (opt-at -> AT .)
 
 
-state 272
+state 273
 
     (240) opt-at -> empty .
 
     ID              reduce using rule 240 (opt-at -> empty .)
 
 
-state 273
+state 274
 
     (83) param-type -> type-name LESS standalone-type GREATER .
 
@@ -9875,7 +9884,7 @@ state 273
     RBRACKET        reduce using rule 83 (param-type -> type-name LESS standalone-type GREATER .)
 
 
-state 274
+state 275
 
     (88) standalone-type -> type-prefix type-suffix .
 
@@ -9883,7 +9892,7 @@ state 274
     RBRACKET        reduce using rule 88 (standalone-type -> type-prefix type-suffix .)
 
 
-state 275
+state 276
 
     (35) empty-or-arg-list -> formal-arg-list .
 
@@ -9892,7 +9901,7 @@ state 275
     LBRACE          reduce using rule 35 (empty-or-arg-list -> formal-arg-list .)
 
 
-state 276
+state 277
 
     (34) func-hdr -> type-params formal-arg-list ID empty-or-arg-list .
 
@@ -9901,7 +9910,7 @@ state 276
     LBRACE          reduce using rule 34 (func-hdr -> type-params formal-arg-list ID empty-or-arg-list .)
 
 
-state 277
+state 278
 
     (36) empty-or-arg-list -> empty .
     (42) formal-arg-list -> empty .
@@ -9918,7 +9927,7 @@ state 277
   ! LBRACE          [ reduce using rule 42 (formal-arg-list -> empty .) ]
 
 
-state 278
+state 279
 
     (41) formal-arg-list -> LPAREN opt-formal-args RPAREN .
 
@@ -9929,14 +9938,14 @@ state 278
     ASSIGN          reduce using rule 41 (formal-arg-list -> LPAREN opt-formal-args RPAREN .)
 
 
-state 279
+state 280
 
     (43) opt-formal-args -> formal-arg comma-args-star .
 
     RPAREN          reduce using rule 43 (opt-formal-args -> formal-arg comma-args-star .)
 
 
-state 280
+state 281
 
     (45) comma-args-star -> COMMA . formal-arg comma-args-star
     (47) formal-arg -> . type-prefix empty-or-range var-name type-suffix empty-or-ass-expr
@@ -9969,42 +9978,42 @@ state 280
     collection_DICT shift and go to state 62
     ID              shift and go to state 152
 
-    formal-arg                     shift and go to state 329
+    formal-arg                     shift and go to state 330
     type-prefix                    shift and go to state 197
     type-name                      shift and go to state 48
     param-type                     shift and go to state 49
 
-state 281
+state 282
 
     (46) comma-args-star -> empty .
 
     RPAREN          reduce using rule 46 (comma-args-star -> empty .)
 
 
-state 282
+state 283
 
     (47) formal-arg -> type-prefix empty-or-range . var-name type-suffix empty-or-ass-expr
     (227) var-name -> . ID
 
     ID              shift and go to state 82
 
-    var-name                       shift and go to state 330
+    var-name                       shift and go to state 331
 
-state 283
+state 284
 
     (48) empty-or-range -> RANGE .
 
     ID              reduce using rule 48 (empty-or-range -> RANGE .)
 
 
-state 284
+state 285
 
     (49) empty-or-range -> empty .
 
     ID              reduce using rule 49 (empty-or-range -> empty .)
 
 
-state 285
+state 286
 
     (229) lval-expr-star -> COMMA lval-expr lval-expr-star .
 
@@ -10013,7 +10022,7 @@ state 285
     RPAREN          reduce using rule 229 (lval-expr-star -> COMMA lval-expr lval-expr-star .)
 
 
-state 286
+state 287
 
     (105) update-stmt -> var-name LESS ID GREATER UPD . expr SEMICOLON
     (134) expr -> . or-expr
@@ -10077,7 +10086,7 @@ state 286
     LBRACE          shift and go to state 149
 
     var-name                       shift and go to state 131
-    expr                           shift and go to state 331
+    expr                           shift and go to state 332
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -10098,7 +10107,7 @@ state 286
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 287
+state 288
 
     (190) array-list-constructor -> LBRACKET opt-expr-list RBRACKET .
 
@@ -10169,507 +10178,9 @@ state 287
     E_FALSE         reduce using rule 190 (array-list-constructor -> LBRACKET opt-expr-list RBRACKET .)
 
 
-state 288
-
-    (193) array-range-constructor -> LBRACKET expr COLON . expr opt-coloned-expr RBRACKET
-    (134) expr -> . or-expr
-    (135) or-expr -> . and-expr
-    (136) or-expr -> . or-expr LOG_OR and-expr
-    (137) and-expr -> . eq-expr
-    (138) and-expr -> . and-expr LOG_AND eq-expr
-    (139) eq-expr -> . cmp-expr
-    (140) eq-expr -> . eq-expr eq-or-not-eq eq-expr
-    (143) cmp-expr -> . add-expr
-    (144) cmp-expr -> . cmp-expr cmp-sign add-expr
-    (150) add-expr -> . mult-expr
-    (151) add-expr -> . add-expr add-sign mult-expr
-    (154) mult-expr -> . unary-expr
-    (155) mult-expr -> . mult-expr mult-sign unary-expr
-    (161) unary-expr -> . postfix-expr
-    (162) unary-expr -> . minus-or-excl postfix-expr
-    (165) postfix-expr -> . base-expr
-    (166) postfix-expr -> . postfix-expr array-or-struct
-    (163) minus-or-excl -> . MINUS
-    (164) minus-or-excl -> . EXCLAMATION
-    (171) base-expr -> . literal
-    (172) base-expr -> . func-call
-    (173) base-expr -> . var-name
-    (174) base-expr -> . LPAREN expr RPAREN
-    (175) base-expr -> . -constructor
-    (176) base-expr -> . array-constructor
-    (203) literal -> . STR_LITERAL
-    (204) literal -> . MUL_STR_LITERAL
-    (205) literal -> . INT
-    (206) literal -> . float-literal
-    (207) literal -> . bool-literal
-    (177) func-call -> . ID LPAREN func-call-arg-list RPAREN
-    (227) var-name -> . ID
-    (184) -constructor -> . LPAREN expr COMMA expr comma-expr-star RPAREN
-    (187) array-constructor -> . array-list-constructor
-    (188) array-constructor -> . array-range-constructor
-    (189) array-constructor -> . array-kv-constructor
-    (208) float-literal -> . DOUBLE
-    (209) float-literal -> . INF
-    (210) float-literal -> . NAN
-    (211) bool-literal -> . E_TRUE
-    (212) bool-literal -> . E_FALSE
-    (190) array-list-constructor -> . LBRACKET opt-expr-list RBRACKET
-    (193) array-range-constructor -> . LBRACKET expr COLON expr opt-coloned-expr RBRACKET
-    (196) array-kv-constructor -> . LBRACE opt-array-constructor RBRACE
-
-    MINUS           shift and go to state 127
-    EXCLAMATION     shift and go to state 128
-    LPAREN          shift and go to state 132
-    STR_LITERAL     shift and go to state 135
-    MUL_STR_LITERAL shift and go to state 136
-    INT             shift and go to state 137
-    ID              shift and go to state 140
-    DOUBLE          shift and go to state 144
-    INF             shift and go to state 145
-    NAN             shift and go to state 146
-    E_TRUE          shift and go to state 147
-    E_FALSE         shift and go to state 148
-    LBRACKET        shift and go to state 115
-    LBRACE          shift and go to state 149
-
-    expr                           shift and go to state 332
-    or-expr                        shift and go to state 117
-    and-expr                       shift and go to state 118
-    eq-expr                        shift and go to state 119
-    cmp-expr                       shift and go to state 120
-    add-expr                       shift and go to state 121
-    mult-expr                      shift and go to state 122
-    unary-expr                     shift and go to state 123
-    postfix-expr                   shift and go to state 124
-    minus-or-excl                  shift and go to state 125
-    base-expr                      shift and go to state 126
-    literal                        shift and go to state 129
-    func-call                      shift and go to state 130
-    var-name                       shift and go to state 131
-    -constructor                   shift and go to state 133
-    array-constructor              shift and go to state 134
-    float-literal                  shift and go to state 138
-    bool-literal                   shift and go to state 139
-    array-list-constructor         shift and go to state 141
-    array-range-constructor        shift and go to state 142
-    array-kv-constructor           shift and go to state 143
-
 state 289
 
-    (136) or-expr -> or-expr LOG_OR and-expr .
-    (138) and-expr -> and-expr . LOG_AND eq-expr
-
-    LOG_OR          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    RBRACKET        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    SEMICOLON       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    COMMA           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    RPAREN          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    C_GLOBAL        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    D_IMPORT        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    C_PRAGMA        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    LBRACE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_IF            reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_SWITCH        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    E_WAIT          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_FOREACH       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_FOR           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_WHILE         reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_ITERATE       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_ELSE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    ID              reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    C_APP           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    LPAREN          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_INT       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_DOUBLE    reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_FLOAT     reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_VOID      reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_UINT      reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_BOOL      reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_CHARACTER reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    class_String    reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    collection_SET  reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    collection_ARRAY reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    collection_DICT reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    LESS            reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    $end            reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    ARROW           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    RBRACE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_CASE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    S_DEFAULT       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    COLON           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    GREATER         reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    E_STDIN         reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    E_STDOUT        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    E_STDERR        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
-    LOG_AND         shift and go to state 206
-
-
-state 290
-
-    (138) and-expr -> and-expr LOG_AND eq-expr .
-    (140) eq-expr -> eq-expr . eq-or-not-eq eq-expr
-    (141) eq-or-not-eq -> . EQUAL
-    (142) eq-or-not-eq -> . NOT_EQUAL
-
-    LOG_AND         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    LOG_OR          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    RBRACKET        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    SEMICOLON       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    COMMA           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    RPAREN          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    C_GLOBAL        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    D_IMPORT        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    C_PRAGMA        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    LBRACE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_IF            reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_SWITCH        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    E_WAIT          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_FOREACH       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_FOR           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_WHILE         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_ITERATE       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_ELSE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    ID              reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    C_APP           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    LPAREN          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_INT       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_DOUBLE    reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_FLOAT     reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_VOID      reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_UINT      reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_BOOL      reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_CHARACTER reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    class_String    reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    collection_SET  reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    collection_ARRAY reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    collection_DICT reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    LESS            reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    $end            reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    ARROW           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    RBRACE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_CASE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    S_DEFAULT       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    COLON           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    GREATER         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    E_STDIN         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    E_STDOUT        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    E_STDERR        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
-    EQUAL           shift and go to state 208
-    NOT_EQUAL       shift and go to state 209
-
-    eq-or-not-eq                   shift and go to state 207
-
-state 291
-
-    (140) eq-expr -> eq-expr eq-or-not-eq eq-expr .
-    (140) eq-expr -> eq-expr . eq-or-not-eq eq-expr
-    (141) eq-or-not-eq -> . EQUAL
-    (142) eq-or-not-eq -> . NOT_EQUAL
-
-  ! shift/reduce conflict for EQUAL resolved as shift
-  ! shift/reduce conflict for NOT_EQUAL resolved as shift
-    LOG_AND         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    LOG_OR          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    RBRACKET        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    SEMICOLON       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    COMMA           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    RPAREN          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    C_GLOBAL        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    D_IMPORT        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    C_PRAGMA        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    LBRACE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_IF            reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_SWITCH        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    E_WAIT          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_FOREACH       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_FOR           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_WHILE         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_ITERATE       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_ELSE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    ID              reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    C_APP           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    LPAREN          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_INT       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_DOUBLE    reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_FLOAT     reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_VOID      reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_UINT      reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_BOOL      reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_CHARACTER reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    class_String    reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    collection_SET  reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    collection_ARRAY reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    collection_DICT reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    LESS            reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    $end            reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    ARROW           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    RBRACE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_CASE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    S_DEFAULT       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    COLON           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    GREATER         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    E_STDIN         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    E_STDOUT        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    E_STDERR        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
-    EQUAL           shift and go to state 208
-    NOT_EQUAL       shift and go to state 209
-
-  ! EQUAL           [ reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .) ]
-  ! NOT_EQUAL       [ reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .) ]
-
-    eq-or-not-eq                   shift and go to state 207
-
-state 292
-
-    (144) cmp-expr -> cmp-expr cmp-sign add-expr .
-    (151) add-expr -> add-expr . add-sign mult-expr
-    (152) add-sign -> . PLUS
-    (153) add-sign -> . MINUS
-
-    LESS            reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    LESS_EQ         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    EQUAL           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    GREATER         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    GREATER_EQ      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    NOT_EQUAL       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    LOG_AND         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    LOG_OR          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    RBRACKET        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    SEMICOLON       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    COMMA           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    RPAREN          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    C_GLOBAL        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    D_IMPORT        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    C_PRAGMA        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    LBRACE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_IF            reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_SWITCH        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    E_WAIT          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_FOREACH       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_FOR           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_WHILE         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_ITERATE       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_ELSE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    ID              reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    C_APP           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    LPAREN          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_INT       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_DOUBLE    reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_FLOAT     reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_VOID      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_UINT      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_BOOL      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_CHARACTER reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    class_String    reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    collection_SET  reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    collection_ARRAY reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    collection_DICT reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    $end            reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    ARROW           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    RBRACE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_CASE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    S_DEFAULT       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    COLON           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    E_STDIN         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    E_STDOUT        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    E_STDERR        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
-    PLUS            shift and go to state 217
-    MINUS           shift and go to state 218
-
-    add-sign                       shift and go to state 216
-
-state 293
-
-    (151) add-expr -> add-expr add-sign mult-expr .
-    (155) mult-expr -> mult-expr . mult-sign unary-expr
-    (156) mult-sign -> . MULT
-    (157) mult-sign -> . DIV
-    (158) mult-sign -> . MULTPER
-    (159) mult-sign -> . DOUBLEPER
-    (160) mult-sign -> . MOD
-
-    PLUS            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    MINUS           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    LESS            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    LESS_EQ         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    EQUAL           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    GREATER         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    GREATER_EQ      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    NOT_EQUAL       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    LOG_AND         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    LOG_OR          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    RBRACKET        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    SEMICOLON       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    COMMA           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    RPAREN          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    C_GLOBAL        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    D_IMPORT        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    C_PRAGMA        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    LBRACE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_IF            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_SWITCH        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    E_WAIT          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_FOREACH       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_FOR           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_WHILE         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_ITERATE       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_ELSE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    ID              reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    C_APP           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    LPAREN          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_INT       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_DOUBLE    reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_FLOAT     reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_VOID      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_UINT      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_BOOL      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_CHARACTER reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    class_String    reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    collection_SET  reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    collection_ARRAY reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    collection_DICT reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    $end            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    ARROW           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    RBRACE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_CASE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    S_DEFAULT       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    COLON           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    E_STDIN         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    E_STDOUT        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    E_STDERR        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
-    MULT            shift and go to state 220
-    DIV             shift and go to state 221
-    MULTPER         shift and go to state 222
-    DOUBLEPER       shift and go to state 223
-    MOD             shift and go to state 224
-
-    mult-sign                      shift and go to state 219
-
-state 294
-
-    (155) mult-expr -> mult-expr mult-sign unary-expr .
-
-    MULT            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    DIV             reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    MULTPER         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    DOUBLEPER       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    MOD             reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    PLUS            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    MINUS           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    LESS            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    LESS_EQ         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    EQUAL           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    GREATER         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    GREATER_EQ      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    NOT_EQUAL       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    LOG_AND         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    LOG_OR          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    RBRACKET        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    SEMICOLON       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    COMMA           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    RPAREN          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    C_GLOBAL        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    D_IMPORT        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    C_PRAGMA        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    LBRACE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_IF            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_SWITCH        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    E_WAIT          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_FOREACH       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_FOR           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_WHILE         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_ITERATE       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_ELSE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    ID              reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    C_APP           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    LPAREN          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_INT       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_DOUBLE    reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_FLOAT     reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_VOID      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_UINT      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_BOOL      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_CHARACTER reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    class_String    reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    collection_SET  reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    collection_ARRAY reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    collection_DICT reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    $end            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    ARROW           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    RBRACE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_CASE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    S_DEFAULT       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    COLON           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    E_STDIN         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    E_STDOUT        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-    E_STDERR        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
-
-
-state 295
-
-    (174) base-expr -> LPAREN expr RPAREN .
-
-    LBRACKET        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    DOT             reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    MULT            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    DIV             reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    MULTPER         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    DOUBLEPER       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    MOD             reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    PLUS            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    MINUS           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    LESS            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    LESS_EQ         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    EQUAL           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    GREATER         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    GREATER_EQ      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    NOT_EQUAL       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    LOG_AND         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    LOG_OR          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    RBRACKET        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    SEMICOLON       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    COMMA           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    RPAREN          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    C_GLOBAL        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    D_IMPORT        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    C_PRAGMA        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    LBRACE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_IF            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_SWITCH        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    E_WAIT          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_FOREACH       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_FOR           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_WHILE         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_ITERATE       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_ELSE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    ID              reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    C_APP           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    LPAREN          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_INT       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_DOUBLE    reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_FLOAT     reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_VOID      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_UINT      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_BOOL      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_CHARACTER reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    class_String    reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    collection_SET  reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    collection_ARRAY reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    collection_DICT reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    $end            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    ARROW           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    RBRACE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_CASE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    S_DEFAULT       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    COLON           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    E_STDIN         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    E_STDOUT        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-    E_STDERR        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
-
-
-state 296
-
-    (184) -constructor -> LPAREN expr COMMA . expr comma-expr-star RPAREN
+    (193) array-range-constructor -> LBRACKET expr COLON . expr opt-coloned-expr RBRACKET
     (134) expr -> . or-expr
     (135) or-expr -> . and-expr
     (136) or-expr -> . or-expr LOG_OR and-expr
@@ -10752,7 +10263,505 @@ state 296
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
+state 290
+
+    (136) or-expr -> or-expr LOG_OR and-expr .
+    (138) and-expr -> and-expr . LOG_AND eq-expr
+
+    LOG_OR          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    RBRACKET        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    SEMICOLON       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    COMMA           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    RPAREN          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    C_GLOBAL        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    D_IMPORT        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    C_PRAGMA        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    LBRACE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_IF            reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_SWITCH        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    E_WAIT          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_FOREACH       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_FOR           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_WHILE         reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_ITERATE       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_ELSE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    ID              reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    C_APP           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    LPAREN          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_INT       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_DOUBLE    reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_FLOAT     reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_VOID      reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_UINT      reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_BOOL      reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_CHARACTER reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    class_String    reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    collection_SET  reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    collection_ARRAY reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    collection_DICT reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    LESS            reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    $end            reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    ARROW           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    RBRACE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_CASE          reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    S_DEFAULT       reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    COLON           reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    GREATER         reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    E_STDIN         reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    E_STDOUT        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    E_STDERR        reduce using rule 136 (or-expr -> or-expr LOG_OR and-expr .)
+    LOG_AND         shift and go to state 206
+
+
+state 291
+
+    (138) and-expr -> and-expr LOG_AND eq-expr .
+    (140) eq-expr -> eq-expr . eq-or-not-eq eq-expr
+    (141) eq-or-not-eq -> . EQUAL
+    (142) eq-or-not-eq -> . NOT_EQUAL
+
+    LOG_AND         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    LOG_OR          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    RBRACKET        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    SEMICOLON       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    COMMA           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    RPAREN          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    C_GLOBAL        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    D_IMPORT        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    C_PRAGMA        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    LBRACE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_IF            reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_SWITCH        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    E_WAIT          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_FOREACH       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_FOR           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_WHILE         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_ITERATE       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_ELSE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    ID              reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    C_APP           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    LPAREN          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_INT       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_DOUBLE    reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_FLOAT     reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_VOID      reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_UINT      reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_BOOL      reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_CHARACTER reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    class_String    reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    collection_SET  reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    collection_ARRAY reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    collection_DICT reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    LESS            reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    $end            reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    ARROW           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    RBRACE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_CASE          reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    S_DEFAULT       reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    COLON           reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    GREATER         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    E_STDIN         reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    E_STDOUT        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    E_STDERR        reduce using rule 138 (and-expr -> and-expr LOG_AND eq-expr .)
+    EQUAL           shift and go to state 208
+    NOT_EQUAL       shift and go to state 209
+
+    eq-or-not-eq                   shift and go to state 207
+
+state 292
+
+    (140) eq-expr -> eq-expr eq-or-not-eq eq-expr .
+    (140) eq-expr -> eq-expr . eq-or-not-eq eq-expr
+    (141) eq-or-not-eq -> . EQUAL
+    (142) eq-or-not-eq -> . NOT_EQUAL
+
+  ! shift/reduce conflict for EQUAL resolved as shift
+  ! shift/reduce conflict for NOT_EQUAL resolved as shift
+    LOG_AND         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    LOG_OR          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    RBRACKET        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    SEMICOLON       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    COMMA           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    RPAREN          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    C_GLOBAL        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    D_IMPORT        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    C_PRAGMA        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    LBRACE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_IF            reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_SWITCH        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    E_WAIT          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_FOREACH       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_FOR           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_WHILE         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_ITERATE       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_ELSE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    ID              reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    C_APP           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    LPAREN          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_INT       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_DOUBLE    reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_FLOAT     reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_VOID      reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_UINT      reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_BOOL      reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_CHARACTER reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    class_String    reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    collection_SET  reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    collection_ARRAY reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    collection_DICT reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    LESS            reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    $end            reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    ARROW           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    RBRACE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_CASE          reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    S_DEFAULT       reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    COLON           reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    GREATER         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    E_STDIN         reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    E_STDOUT        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    E_STDERR        reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .)
+    EQUAL           shift and go to state 208
+    NOT_EQUAL       shift and go to state 209
+
+  ! EQUAL           [ reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .) ]
+  ! NOT_EQUAL       [ reduce using rule 140 (eq-expr -> eq-expr eq-or-not-eq eq-expr .) ]
+
+    eq-or-not-eq                   shift and go to state 207
+
+state 293
+
+    (144) cmp-expr -> cmp-expr cmp-sign add-expr .
+    (151) add-expr -> add-expr . add-sign mult-expr
+    (152) add-sign -> . PLUS
+    (153) add-sign -> . MINUS
+
+    LESS            reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    LESS_EQ         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    EQUAL           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    GREATER         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    GREATER_EQ      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    NOT_EQUAL       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    LOG_AND         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    LOG_OR          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    RBRACKET        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    SEMICOLON       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    COMMA           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    RPAREN          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    C_GLOBAL        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    D_IMPORT        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    C_PRAGMA        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    LBRACE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_IF            reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_SWITCH        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    E_WAIT          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_FOREACH       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_FOR           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_WHILE         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_ITERATE       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_ELSE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    ID              reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    C_APP           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    LPAREN          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_INT       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_DOUBLE    reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_FLOAT     reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_VOID      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_UINT      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_BOOL      reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_CHARACTER reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    class_String    reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    collection_SET  reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    collection_ARRAY reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    collection_DICT reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    $end            reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    ARROW           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    RBRACE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_CASE          reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    S_DEFAULT       reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    COLON           reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    E_STDIN         reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    E_STDOUT        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    E_STDERR        reduce using rule 144 (cmp-expr -> cmp-expr cmp-sign add-expr .)
+    PLUS            shift and go to state 217
+    MINUS           shift and go to state 218
+
+    add-sign                       shift and go to state 216
+
+state 294
+
+    (151) add-expr -> add-expr add-sign mult-expr .
+    (155) mult-expr -> mult-expr . mult-sign unary-expr
+    (156) mult-sign -> . MULT
+    (157) mult-sign -> . DIV
+    (158) mult-sign -> . MULTPER
+    (159) mult-sign -> . DOUBLEPER
+    (160) mult-sign -> . MOD
+
+    PLUS            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    MINUS           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    LESS            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    LESS_EQ         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    EQUAL           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    GREATER         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    GREATER_EQ      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    NOT_EQUAL       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    LOG_AND         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    LOG_OR          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    RBRACKET        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    SEMICOLON       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    COMMA           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    RPAREN          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    C_GLOBAL        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    D_IMPORT        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    C_PRAGMA        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    LBRACE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_IF            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_SWITCH        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    E_WAIT          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_FOREACH       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_FOR           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_WHILE         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_ITERATE       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_ELSE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    ID              reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    C_APP           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    LPAREN          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_INT       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_DOUBLE    reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_FLOAT     reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_VOID      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_UINT      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_BOOL      reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_CHARACTER reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    class_String    reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    collection_SET  reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    collection_ARRAY reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    collection_DICT reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    $end            reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    ARROW           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    RBRACE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_CASE          reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    S_DEFAULT       reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    COLON           reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    E_STDIN         reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    E_STDOUT        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    E_STDERR        reduce using rule 151 (add-expr -> add-expr add-sign mult-expr .)
+    MULT            shift and go to state 220
+    DIV             shift and go to state 221
+    MULTPER         shift and go to state 222
+    DOUBLEPER       shift and go to state 223
+    MOD             shift and go to state 224
+
+    mult-sign                      shift and go to state 219
+
+state 295
+
+    (155) mult-expr -> mult-expr mult-sign unary-expr .
+
+    MULT            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    DIV             reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    MULTPER         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    DOUBLEPER       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    MOD             reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    PLUS            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    MINUS           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    LESS            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    LESS_EQ         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    EQUAL           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    GREATER         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    GREATER_EQ      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    NOT_EQUAL       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    LOG_AND         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    LOG_OR          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    RBRACKET        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    SEMICOLON       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    COMMA           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    RPAREN          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    C_GLOBAL        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    D_IMPORT        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    C_PRAGMA        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    LBRACE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_IF            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_SWITCH        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    E_WAIT          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_FOREACH       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_FOR           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_WHILE         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_ITERATE       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_ELSE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    ID              reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    C_APP           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    LPAREN          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_INT       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_DOUBLE    reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_FLOAT     reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_VOID      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_UINT      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_BOOL      reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_CHARACTER reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    class_String    reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    collection_SET  reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    collection_ARRAY reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    collection_DICT reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    $end            reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    ARROW           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    RBRACE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_CASE          reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    S_DEFAULT       reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    COLON           reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    E_STDIN         reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    E_STDOUT        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+    E_STDERR        reduce using rule 155 (mult-expr -> mult-expr mult-sign unary-expr .)
+
+
+state 296
+
+    (174) base-expr -> LPAREN expr RPAREN .
+
+    LBRACKET        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    DOT             reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    MULT            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    DIV             reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    MULTPER         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    DOUBLEPER       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    MOD             reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    PLUS            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    MINUS           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    LESS            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    LESS_EQ         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    EQUAL           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    GREATER         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    GREATER_EQ      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    NOT_EQUAL       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    LOG_AND         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    LOG_OR          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    RBRACKET        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    SEMICOLON       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    COMMA           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    RPAREN          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    C_GLOBAL        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    D_IMPORT        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    C_PRAGMA        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    LBRACE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_IF            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_SWITCH        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    E_WAIT          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_FOREACH       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_FOR           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_WHILE         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_ITERATE       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_ELSE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    ID              reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    C_APP           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    LPAREN          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_INT       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_DOUBLE    reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_FLOAT     reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_VOID      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_UINT      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_BOOL      reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_CHARACTER reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    class_String    reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    collection_SET  reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    collection_ARRAY reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    collection_DICT reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    $end            reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    ARROW           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    RBRACE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_CASE          reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    S_DEFAULT       reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    COLON           reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    E_STDIN         reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    E_STDOUT        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+    E_STDERR        reduce using rule 174 (base-expr -> LPAREN expr RPAREN .)
+
+
 state 297
+
+    (184) -constructor -> LPAREN expr COMMA . expr comma-expr-star RPAREN
+    (134) expr -> . or-expr
+    (135) or-expr -> . and-expr
+    (136) or-expr -> . or-expr LOG_OR and-expr
+    (137) and-expr -> . eq-expr
+    (138) and-expr -> . and-expr LOG_AND eq-expr
+    (139) eq-expr -> . cmp-expr
+    (140) eq-expr -> . eq-expr eq-or-not-eq eq-expr
+    (143) cmp-expr -> . add-expr
+    (144) cmp-expr -> . cmp-expr cmp-sign add-expr
+    (150) add-expr -> . mult-expr
+    (151) add-expr -> . add-expr add-sign mult-expr
+    (154) mult-expr -> . unary-expr
+    (155) mult-expr -> . mult-expr mult-sign unary-expr
+    (161) unary-expr -> . postfix-expr
+    (162) unary-expr -> . minus-or-excl postfix-expr
+    (165) postfix-expr -> . base-expr
+    (166) postfix-expr -> . postfix-expr array-or-struct
+    (163) minus-or-excl -> . MINUS
+    (164) minus-or-excl -> . EXCLAMATION
+    (171) base-expr -> . literal
+    (172) base-expr -> . func-call
+    (173) base-expr -> . var-name
+    (174) base-expr -> . LPAREN expr RPAREN
+    (175) base-expr -> . -constructor
+    (176) base-expr -> . array-constructor
+    (203) literal -> . STR_LITERAL
+    (204) literal -> . MUL_STR_LITERAL
+    (205) literal -> . INT
+    (206) literal -> . float-literal
+    (207) literal -> . bool-literal
+    (177) func-call -> . ID LPAREN func-call-arg-list RPAREN
+    (227) var-name -> . ID
+    (184) -constructor -> . LPAREN expr COMMA expr comma-expr-star RPAREN
+    (187) array-constructor -> . array-list-constructor
+    (188) array-constructor -> . array-range-constructor
+    (189) array-constructor -> . array-kv-constructor
+    (208) float-literal -> . DOUBLE
+    (209) float-literal -> . INF
+    (210) float-literal -> . NAN
+    (211) bool-literal -> . E_TRUE
+    (212) bool-literal -> . E_FALSE
+    (190) array-list-constructor -> . LBRACKET opt-expr-list RBRACKET
+    (193) array-range-constructor -> . LBRACKET expr COLON expr opt-coloned-expr RBRACKET
+    (196) array-kv-constructor -> . LBRACE opt-array-constructor RBRACE
+
+    MINUS           shift and go to state 127
+    EXCLAMATION     shift and go to state 128
+    LPAREN          shift and go to state 132
+    STR_LITERAL     shift and go to state 135
+    MUL_STR_LITERAL shift and go to state 136
+    INT             shift and go to state 137
+    ID              shift and go to state 140
+    DOUBLE          shift and go to state 144
+    INF             shift and go to state 145
+    NAN             shift and go to state 146
+    E_TRUE          shift and go to state 147
+    E_FALSE         shift and go to state 148
+    LBRACKET        shift and go to state 115
+    LBRACE          shift and go to state 149
+
+    expr                           shift and go to state 334
+    or-expr                        shift and go to state 117
+    and-expr                       shift and go to state 118
+    eq-expr                        shift and go to state 119
+    cmp-expr                       shift and go to state 120
+    add-expr                       shift and go to state 121
+    mult-expr                      shift and go to state 122
+    unary-expr                     shift and go to state 123
+    postfix-expr                   shift and go to state 124
+    minus-or-excl                  shift and go to state 125
+    base-expr                      shift and go to state 126
+    literal                        shift and go to state 129
+    func-call                      shift and go to state 130
+    var-name                       shift and go to state 131
+    -constructor                   shift and go to state 133
+    array-constructor              shift and go to state 134
+    float-literal                  shift and go to state 138
+    bool-literal                   shift and go to state 139
+    array-list-constructor         shift and go to state 141
+    array-range-constructor        shift and go to state 142
+    array-kv-constructor           shift and go to state 143
+
+state 298
 
     (196) array-kv-constructor -> LBRACE opt-array-constructor RBRACE .
 
@@ -10823,14 +10832,14 @@ state 297
     E_FALSE         reduce using rule 196 (array-kv-constructor -> LBRACE opt-array-constructor RBRACE .)
 
 
-state 298
+state 299
 
     (197) opt-array-constructor -> array-kv-elem comma-array-kv-elem-star .
 
     RBRACE          reduce using rule 197 (opt-array-constructor -> array-kv-elem comma-array-kv-elem-star .)
 
 
-state 299
+state 300
 
     (199) comma-array-kv-elem-star -> COMMA . array-kv-elem comma-array-kv-elem-star
     (201) array-kv-elem -> . expr COLON expr
@@ -10894,7 +10903,7 @@ state 299
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    array-kv-elem                  shift and go to state 334
+    array-kv-elem                  shift and go to state 335
     expr                           shift and go to state 233
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
@@ -10917,14 +10926,14 @@ state 299
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 300
+state 301
 
     (200) comma-array-kv-elem-star -> empty .
 
     RBRACE          reduce using rule 200 (comma-array-kv-elem-star -> empty .)
 
 
-state 301
+state 302
 
     (201) array-kv-elem -> expr COLON . expr
     (134) expr -> . or-expr
@@ -10987,7 +10996,7 @@ state 301
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 335
+    expr                           shift and go to state 336
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -11009,14 +11018,14 @@ state 301
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 302
+state 303
 
     (28) path-star -> DOT ID path-star .
 
     SEMICOLON       reduce using rule 28 (path-star -> DOT ID path-star .)
 
 
-state 303
+state 304
 
     (202) kw-expr -> ID ASSIGN expr .
 
@@ -11024,7 +11033,7 @@ state 303
     RPAREN          reduce using rule 202 (kw-expr -> ID ASSIGN expr .)
 
 
-state 304
+state 305
 
     (179) func-call-arg-star -> COMMA expr-or-kw . func-call-arg-star
     (179) func-call-arg-star -> . COMMA expr-or-kw func-call-arg-star
@@ -11034,10 +11043,10 @@ state 304
     COMMA           shift and go to state 240
     RPAREN          reduce using rule 76 (empty -> .)
 
-    func-call-arg-star             shift and go to state 336
+    func-call-arg-star             shift and go to state 337
     empty                          shift and go to state 241
 
-state 305
+state 306
 
     (106) if-stmt -> S_IF LPAREN expr RPAREN block . opt-else-block
     (107) opt-else-block -> . S_ELSE block
@@ -11080,67 +11089,71 @@ state 305
 
   ! S_ELSE          [ reduce using rule 76 (empty -> .) ]
 
-    opt-else-block                 shift and go to state 337
-    empty                          shift and go to state 338
+    opt-else-block                 shift and go to state 338
+    empty                          shift and go to state 339
 
-state 306
+state 307
 
     (109) switch-stmt -> S_SWITCH LPAREN expr RPAREN LBRACE . case-star opt-default RBRACE
     (112) case-star -> . case case-star
-    (113) case-star -> .
+    (113) case-star -> . empty
     (114) case -> . S_CASE INT COLON translation-unit
+    (76) empty -> .
 
-    S_DEFAULT       reduce using rule 113 (case-star -> .)
-    RBRACE          reduce using rule 113 (case-star -> .)
-    S_CASE          shift and go to state 341
+    S_CASE          shift and go to state 343
+    S_DEFAULT       reduce using rule 76 (empty -> .)
+    RBRACE          reduce using rule 76 (empty -> .)
 
-    case-star                      shift and go to state 339
-    case                           shift and go to state 340
+    case-star                      shift and go to state 340
+    case                           shift and go to state 341
+    empty                          shift and go to state 342
 
-state 307
+state 308
 
     (116) wait-stmt -> E_WAIT opt-deep LPAREN expr-list RPAREN . block
     (90) block -> . LBRACE translation-unit RBRACE
 
     LBRACE          shift and go to state 32
 
-    block                          shift and go to state 342
+    block                          shift and go to state 344
 
-state 308
+state 309
 
     (119) foreach-loop -> S_FOREACH var-name opt-comma-var-name S_IN expr . block
     (90) block -> . LBRACE translation-unit RBRACE
 
     LBRACE          shift and go to state 32
 
-    block                          shift and go to state 343
-
-state 309
-
-    (122) for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr . SEMICOLON for-update-list RPAREN block
-
-    SEMICOLON       shift and go to state 344
-
+    block                          shift and go to state 345
 
 state 310
 
-    (125) for-init-star -> COMMA for-init . for-init-star
-    (125) for-init-star -> . COMMA for-init for-init-star
-    (126) for-init-star -> .
+    (122) for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr . SEMICOLON for-update-list RPAREN block
 
-    COMMA           shift and go to state 249
-    SEMICOLON       reduce using rule 126 (for-init-star -> .)
+    SEMICOLON       shift and go to state 346
 
-    for-init-star                  shift and go to state 345
 
 state 311
 
-    (128) for-init -> type-prefix var-name type-suffix . ASSIGN expr
+    (125) for-init-star -> COMMA for-init . for-init-star
+    (125) for-init-star -> . COMMA for-init for-init-star
+    (126) for-init-star -> . empty
+    (76) empty -> .
 
-    ASSIGN          shift and go to state 346
+    COMMA           shift and go to state 249
+    SEMICOLON       reduce using rule 76 (empty -> .)
 
+    for-init-star                  shift and go to state 347
+    empty                          shift and go to state 250
 
 state 312
+
+    (128) for-init -> type-prefix var-name type-suffix . ASSIGN expr
+
+    ASSIGN          shift and go to state 348
+
+
+state 313
 
     (132) for-assignment -> var-name ASSIGN expr .
 
@@ -11149,7 +11162,7 @@ state 312
     RPAREN          reduce using rule 132 (for-assignment -> var-name ASSIGN expr .)
 
 
-state 313
+state 314
 
     (75) var-decl-rest -> var-name type-suffix empty-or-var-mapping empty-or-assign-expr .
 
@@ -11188,7 +11201,7 @@ state 313
     S_DEFAULT       reduce using rule 75 (var-decl-rest -> var-name type-suffix empty-or-var-mapping empty-or-assign-expr .)
 
 
-state 314
+state 315
 
     (79) empty-or-assign-expr -> ASSIGN . expr
     (134) expr -> . or-expr
@@ -11251,7 +11264,7 @@ state 314
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 347
+    expr                           shift and go to state 349
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -11273,7 +11286,7 @@ state 314
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 315
+state 316
 
     (80) empty-or-assign-expr -> empty .
 
@@ -11312,14 +11325,14 @@ state 315
     S_DEFAULT       reduce using rule 80 (empty-or-assign-expr -> empty .)
 
 
-state 316
+state 317
 
     (89) var-mapping -> LESS expr . GREATER
 
-    GREATER         shift and go to state 348
+    GREATER         shift and go to state 350
 
 
-state 317
+state 318
 
     (84) type-suffix -> LBRACKET empty-or-standalone-type RBRACKET . type-suffix
     (84) type-suffix -> . LBRACKET empty-or-standalone-type RBRACKET type-suffix
@@ -11365,9 +11378,9 @@ state 317
     COMMA           reduce using rule 85 (type-suffix -> .)
     RPAREN          reduce using rule 85 (type-suffix -> .)
 
-    type-suffix                    shift and go to state 349
+    type-suffix                    shift and go to state 351
 
-state 318
+state 319
 
     (123) while-loop -> S_WHILE LPAREN expr RPAREN block .
 
@@ -11405,7 +11418,7 @@ state 318
     S_DEFAULT       reduce using rule 123 (while-loop -> S_WHILE LPAREN expr RPAREN block .)
 
 
-state 319
+state 320
 
     (133) iterate-loop -> S_ITERATE var-name block S_UNTIL LPAREN . expr RPAREN
     (134) expr -> . or-expr
@@ -11469,7 +11482,7 @@ state 319
     LBRACE          shift and go to state 149
 
     var-name                       shift and go to state 131
-    expr                           shift and go to state 350
+    expr                           shift and go to state 352
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -11490,14 +11503,14 @@ state 319
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 320
+state 321
 
     (39) comma-name-star -> COMMA var-name comma-name-star .
 
     GREATER         reduce using rule 39 (comma-name-star -> COMMA var-name comma-name-star .)
 
 
-state 321
+state 322
 
     (65) foreign-func-body -> STR_LITERAL STR_LITERAL empty-or-literal empty-or-more-literals .
 
@@ -11535,18 +11548,18 @@ state 321
     S_DEFAULT       reduce using rule 65 (foreign-func-body -> STR_LITERAL STR_LITERAL empty-or-literal empty-or-more-literals .)
 
 
-state 322
+state 323
 
     (68) empty-or-more-literals -> LBRACKET . single-or-multiple-literal RBRACKET
     (70) single-or-multiple-literal -> . STR_LITERAL
     (71) single-or-multiple-literal -> . MUL_STR_LITERAL
 
-    STR_LITERAL     shift and go to state 352
-    MUL_STR_LITERAL shift and go to state 353
+    STR_LITERAL     shift and go to state 354
+    MUL_STR_LITERAL shift and go to state 355
 
-    single-or-multiple-literal     shift and go to state 351
+    single-or-multiple-literal     shift and go to state 353
 
-state 323
+state 324
 
     (69) empty-or-more-literals -> empty .
 
@@ -11584,7 +11597,7 @@ state 323
     S_DEFAULT       reduce using rule 69 (empty-or-more-literals -> empty .)
 
 
-state 324
+state 325
 
     (53) app-func-defn -> C_APP func-hdr LBRACE app-body RBRACE .
 
@@ -11622,7 +11635,7 @@ state 324
     S_DEFAULT       reduce using rule 53 (app-func-defn -> C_APP func-hdr LBRACE app-body RBRACE .)
 
 
-state 325
+state 326
 
     (62) app-arg-expr-star -> app-arg-expr . app-arg-expr-star
     (62) app-arg-expr-star -> . app-arg-expr app-arg-expr-star
@@ -11656,8 +11669,8 @@ state 325
     E_STDERR        reduce using rule 63 (app-arg-expr-star -> .)
     SEMICOLON       reduce using rule 63 (app-arg-expr-star -> .)
     RBRACE          reduce using rule 63 (app-arg-expr-star -> .)
-    LPAREN          shift and go to state 270
-    AT              shift and go to state 271
+    LPAREN          shift and go to state 271
+    AT              shift and go to state 272
     STR_LITERAL     shift and go to state 135
     MUL_STR_LITERAL shift and go to state 136
     INT             shift and go to state 137
@@ -11670,19 +11683,19 @@ state 325
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    app-arg-expr                   shift and go to state 325
-    app-arg-expr-star              shift and go to state 354
-    opt-at                         shift and go to state 267
-    literal                        shift and go to state 268
-    array-constructor              shift and go to state 269
-    empty                          shift and go to state 272
+    app-arg-expr                   shift and go to state 326
+    app-arg-expr-star              shift and go to state 356
+    opt-at                         shift and go to state 268
+    literal                        shift and go to state 269
+    array-constructor              shift and go to state 270
+    empty                          shift and go to state 273
     float-literal                  shift and go to state 138
     bool-literal                   shift and go to state 139
     array-list-constructor         shift and go to state 141
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 326
+state 327
 
     (54) app-body -> app-arg-expr app-arg-expr-star . app-out-star empty-or-semicolon
     (57) app-out-star -> . std-in-out-err ASSIGN expr app-out-star
@@ -11693,14 +11706,14 @@ state 326
 
     SEMICOLON       reduce using rule 58 (app-out-star -> .)
     RBRACE          reduce using rule 58 (app-out-star -> .)
-    E_STDIN         shift and go to state 357
-    E_STDOUT        shift and go to state 358
-    E_STDERR        shift and go to state 359
+    E_STDIN         shift and go to state 359
+    E_STDOUT        shift and go to state 360
+    E_STDERR        shift and go to state 361
 
-    app-out-star                   shift and go to state 355
-    std-in-out-err                 shift and go to state 356
+    app-out-star                   shift and go to state 357
+    std-in-out-err                 shift and go to state 358
 
-state 327
+state 328
 
     (235) app-arg-expr -> opt-at var-name .
 
@@ -11724,27 +11737,27 @@ state 327
     RBRACE          reduce using rule 235 (app-arg-expr -> opt-at var-name .)
 
 
-state 328
+state 329
 
     (238) app-arg-expr -> LPAREN expr . RPAREN
 
-    RPAREN          shift and go to state 360
+    RPAREN          shift and go to state 362
 
 
-state 329
+state 330
 
     (45) comma-args-star -> COMMA formal-arg . comma-args-star
     (45) comma-args-star -> . COMMA formal-arg comma-args-star
     (46) comma-args-star -> . empty
     (76) empty -> .
 
-    COMMA           shift and go to state 280
+    COMMA           shift and go to state 281
     RPAREN          reduce using rule 76 (empty -> .)
 
-    comma-args-star                shift and go to state 361
-    empty                          shift and go to state 281
+    comma-args-star                shift and go to state 363
+    empty                          shift and go to state 282
 
-state 330
+state 331
 
     (47) formal-arg -> type-prefix empty-or-range var-name . type-suffix empty-or-ass-expr
     (84) type-suffix -> . LBRACKET empty-or-standalone-type RBRACKET type-suffix
@@ -11756,55 +11769,55 @@ state 330
     COMMA           reduce using rule 85 (type-suffix -> .)
     RPAREN          reduce using rule 85 (type-suffix -> .)
 
-    type-suffix                    shift and go to state 362
+    type-suffix                    shift and go to state 364
 
-state 331
+state 332
 
     (105) update-stmt -> var-name LESS ID GREATER UPD expr . SEMICOLON
 
-    SEMICOLON       shift and go to state 363
+    SEMICOLON       shift and go to state 365
 
 
-state 332
+state 333
 
     (193) array-range-constructor -> LBRACKET expr COLON expr . opt-coloned-expr RBRACKET
     (194) opt-coloned-expr -> . COLON expr
     (195) opt-coloned-expr -> . empty
     (76) empty -> .
 
-    COLON           shift and go to state 364
+    COLON           shift and go to state 366
     RBRACKET        reduce using rule 76 (empty -> .)
 
-    opt-coloned-expr               shift and go to state 365
-    empty                          shift and go to state 366
+    opt-coloned-expr               shift and go to state 367
+    empty                          shift and go to state 368
 
-state 333
+state 334
 
     (184) -constructor -> LPAREN expr COMMA expr . comma-expr-star RPAREN
     (185) comma-expr-star -> . COMMA expr comma-expr-star
     (186) comma-expr-star -> . empty
     (76) empty -> .
 
-    COMMA           shift and go to state 367
+    COMMA           shift and go to state 369
     RPAREN          reduce using rule 76 (empty -> .)
 
-    comma-expr-star                shift and go to state 368
-    empty                          shift and go to state 369
+    comma-expr-star                shift and go to state 370
+    empty                          shift and go to state 371
 
-state 334
+state 335
 
     (199) comma-array-kv-elem-star -> COMMA array-kv-elem . comma-array-kv-elem-star
     (199) comma-array-kv-elem-star -> . COMMA array-kv-elem comma-array-kv-elem-star
     (200) comma-array-kv-elem-star -> . empty
     (76) empty -> .
 
-    COMMA           shift and go to state 299
+    COMMA           shift and go to state 300
     RBRACE          reduce using rule 76 (empty -> .)
 
-    comma-array-kv-elem-star       shift and go to state 370
-    empty                          shift and go to state 300
+    comma-array-kv-elem-star       shift and go to state 372
+    empty                          shift and go to state 301
 
-state 335
+state 336
 
     (201) array-kv-elem -> expr COLON expr .
 
@@ -11812,14 +11825,14 @@ state 335
     RBRACE          reduce using rule 201 (array-kv-elem -> expr COLON expr .)
 
 
-state 336
+state 337
 
     (179) func-call-arg-star -> COMMA expr-or-kw func-call-arg-star .
 
     RPAREN          reduce using rule 179 (func-call-arg-star -> COMMA expr-or-kw func-call-arg-star .)
 
 
-state 337
+state 338
 
     (106) if-stmt -> S_IF LPAREN expr RPAREN block opt-else-block .
 
@@ -11857,7 +11870,7 @@ state 337
     S_DEFAULT       reduce using rule 106 (if-stmt -> S_IF LPAREN expr RPAREN block opt-else-block .)
 
 
-state 338
+state 339
 
     (108) opt-else-block -> empty .
 
@@ -11895,41 +11908,51 @@ state 338
     S_DEFAULT       reduce using rule 108 (opt-else-block -> empty .)
 
 
-state 339
+state 340
 
     (109) switch-stmt -> S_SWITCH LPAREN expr RPAREN LBRACE case-star . opt-default RBRACE
     (110) opt-default -> . S_DEFAULT
     (111) opt-default -> . empty
     (76) empty -> .
 
-    S_DEFAULT       shift and go to state 372
+    S_DEFAULT       shift and go to state 374
     RBRACE          reduce using rule 76 (empty -> .)
 
-    opt-default                    shift and go to state 371
-    empty                          shift and go to state 373
-
-state 340
-
-    (112) case-star -> case . case-star
-    (112) case-star -> . case case-star
-    (113) case-star -> .
-    (114) case -> . S_CASE INT COLON translation-unit
-
-    S_DEFAULT       reduce using rule 113 (case-star -> .)
-    RBRACE          reduce using rule 113 (case-star -> .)
-    S_CASE          shift and go to state 341
-
-    case                           shift and go to state 340
-    case-star                      shift and go to state 374
+    opt-default                    shift and go to state 373
+    empty                          shift and go to state 375
 
 state 341
 
-    (114) case -> S_CASE . INT COLON translation-unit
+    (112) case-star -> case . case-star
+    (112) case-star -> . case case-star
+    (113) case-star -> . empty
+    (114) case -> . S_CASE INT COLON translation-unit
+    (76) empty -> .
 
-    INT             shift and go to state 375
+    S_CASE          shift and go to state 343
+    S_DEFAULT       reduce using rule 76 (empty -> .)
+    RBRACE          reduce using rule 76 (empty -> .)
 
+    case                           shift and go to state 341
+    case-star                      shift and go to state 376
+    empty                          shift and go to state 342
 
 state 342
+
+    (113) case-star -> empty .
+
+    S_DEFAULT       reduce using rule 113 (case-star -> empty .)
+    RBRACE          reduce using rule 113 (case-star -> empty .)
+
+
+state 343
+
+    (114) case -> S_CASE . INT COLON translation-unit
+
+    INT             shift and go to state 377
+
+
+state 344
 
     (116) wait-stmt -> E_WAIT opt-deep LPAREN expr-list RPAREN block .
 
@@ -11967,7 +11990,7 @@ state 342
     S_DEFAULT       reduce using rule 116 (wait-stmt -> E_WAIT opt-deep LPAREN expr-list RPAREN block .)
 
 
-state 343
+state 345
 
     (119) foreach-loop -> S_FOREACH var-name opt-comma-var-name S_IN expr block .
 
@@ -12005,7 +12028,7 @@ state 343
     S_DEFAULT       reduce using rule 119 (foreach-loop -> S_FOREACH var-name opt-comma-var-name S_IN expr block .)
 
 
-state 344
+state 346
 
     (122) for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON . for-update-list RPAREN block
     (129) for-update-list -> . for-assignment for-assignment-star
@@ -12014,18 +12037,18 @@ state 344
 
     ID              shift and go to state 82
 
-    for-update-list                shift and go to state 376
-    for-assignment                 shift and go to state 377
+    for-update-list                shift and go to state 378
+    for-assignment                 shift and go to state 379
     var-name                       shift and go to state 176
 
-state 345
+state 347
 
     (125) for-init-star -> COMMA for-init for-init-star .
 
     SEMICOLON       reduce using rule 125 (for-init-star -> COMMA for-init for-init-star .)
 
 
-state 346
+state 348
 
     (128) for-init -> type-prefix var-name type-suffix ASSIGN . expr
     (134) expr -> . or-expr
@@ -12089,7 +12112,7 @@ state 346
     LBRACE          shift and go to state 149
 
     var-name                       shift and go to state 131
-    expr                           shift and go to state 378
+    expr                           shift and go to state 380
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -12110,7 +12133,7 @@ state 346
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 347
+state 349
 
     (79) empty-or-assign-expr -> ASSIGN expr .
 
@@ -12149,7 +12172,7 @@ state 347
     S_DEFAULT       reduce using rule 79 (empty-or-assign-expr -> ASSIGN expr .)
 
 
-state 348
+state 350
 
     (89) var-mapping -> LESS expr GREATER .
 
@@ -12189,7 +12212,7 @@ state 348
     S_DEFAULT       reduce using rule 89 (var-mapping -> LESS expr GREATER .)
 
 
-state 349
+state 351
 
     (84) type-suffix -> LBRACKET empty-or-standalone-type RBRACKET type-suffix .
 
@@ -12233,35 +12256,35 @@ state 349
     RPAREN          reduce using rule 84 (type-suffix -> LBRACKET empty-or-standalone-type RBRACKET type-suffix .)
 
 
-state 350
+state 352
 
     (133) iterate-loop -> S_ITERATE var-name block S_UNTIL LPAREN expr . RPAREN
 
-    RPAREN          shift and go to state 379
+    RPAREN          shift and go to state 381
 
 
-state 351
+state 353
 
     (68) empty-or-more-literals -> LBRACKET single-or-multiple-literal . RBRACKET
 
-    RBRACKET        shift and go to state 380
+    RBRACKET        shift and go to state 382
 
 
-state 352
+state 354
 
     (70) single-or-multiple-literal -> STR_LITERAL .
 
     RBRACKET        reduce using rule 70 (single-or-multiple-literal -> STR_LITERAL .)
 
 
-state 353
+state 355
 
     (71) single-or-multiple-literal -> MUL_STR_LITERAL .
 
     RBRACKET        reduce using rule 71 (single-or-multiple-literal -> MUL_STR_LITERAL .)
 
 
-state 354
+state 356
 
     (62) app-arg-expr-star -> app-arg-expr app-arg-expr-star .
 
@@ -12272,48 +12295,48 @@ state 354
     RBRACE          reduce using rule 62 (app-arg-expr-star -> app-arg-expr app-arg-expr-star .)
 
 
-state 355
+state 357
 
     (54) app-body -> app-arg-expr app-arg-expr-star app-out-star . empty-or-semicolon
     (55) empty-or-semicolon -> . SEMICOLON
     (56) empty-or-semicolon -> . empty
     (76) empty -> .
 
-    SEMICOLON       shift and go to state 382
+    SEMICOLON       shift and go to state 384
     RBRACE          reduce using rule 76 (empty -> .)
 
-    empty-or-semicolon             shift and go to state 381
-    empty                          shift and go to state 383
+    empty-or-semicolon             shift and go to state 383
+    empty                          shift and go to state 385
 
-state 356
+state 358
 
     (57) app-out-star -> std-in-out-err . ASSIGN expr app-out-star
 
-    ASSIGN          shift and go to state 384
+    ASSIGN          shift and go to state 386
 
 
-state 357
+state 359
 
     (59) std-in-out-err -> E_STDIN .
 
     ASSIGN          reduce using rule 59 (std-in-out-err -> E_STDIN .)
 
 
-state 358
+state 360
 
     (60) std-in-out-err -> E_STDOUT .
 
     ASSIGN          reduce using rule 60 (std-in-out-err -> E_STDOUT .)
 
 
-state 359
+state 361
 
     (61) std-in-out-err -> E_STDERR .
 
     ASSIGN          reduce using rule 61 (std-in-out-err -> E_STDERR .)
 
 
-state 360
+state 362
 
     (238) app-arg-expr -> LPAREN expr RPAREN .
 
@@ -12337,14 +12360,14 @@ state 360
     RBRACE          reduce using rule 238 (app-arg-expr -> LPAREN expr RPAREN .)
 
 
-state 361
+state 363
 
     (45) comma-args-star -> COMMA formal-arg comma-args-star .
 
     RPAREN          reduce using rule 45 (comma-args-star -> COMMA formal-arg comma-args-star .)
 
 
-state 362
+state 364
 
     (47) formal-arg -> type-prefix empty-or-range var-name type-suffix . empty-or-ass-expr
     (50) empty-or-ass-expr -> . formal-arg-list ASSIGN expr
@@ -12358,11 +12381,11 @@ state 362
     RPAREN          reduce using rule 76 (empty -> .)
     ASSIGN          reduce using rule 76 (empty -> .)
 
-    empty-or-ass-expr              shift and go to state 385
-    formal-arg-list                shift and go to state 386
-    empty                          shift and go to state 387
+    empty-or-ass-expr              shift and go to state 387
+    formal-arg-list                shift and go to state 388
+    empty                          shift and go to state 389
 
-state 363
+state 365
 
     (105) update-stmt -> var-name LESS ID GREATER UPD expr SEMICOLON .
 
@@ -12400,108 +12423,9 @@ state 363
     S_DEFAULT       reduce using rule 105 (update-stmt -> var-name LESS ID GREATER UPD expr SEMICOLON .)
 
 
-state 364
-
-    (194) opt-coloned-expr -> COLON . expr
-    (134) expr -> . or-expr
-    (135) or-expr -> . and-expr
-    (136) or-expr -> . or-expr LOG_OR and-expr
-    (137) and-expr -> . eq-expr
-    (138) and-expr -> . and-expr LOG_AND eq-expr
-    (139) eq-expr -> . cmp-expr
-    (140) eq-expr -> . eq-expr eq-or-not-eq eq-expr
-    (143) cmp-expr -> . add-expr
-    (144) cmp-expr -> . cmp-expr cmp-sign add-expr
-    (150) add-expr -> . mult-expr
-    (151) add-expr -> . add-expr add-sign mult-expr
-    (154) mult-expr -> . unary-expr
-    (155) mult-expr -> . mult-expr mult-sign unary-expr
-    (161) unary-expr -> . postfix-expr
-    (162) unary-expr -> . minus-or-excl postfix-expr
-    (165) postfix-expr -> . base-expr
-    (166) postfix-expr -> . postfix-expr array-or-struct
-    (163) minus-or-excl -> . MINUS
-    (164) minus-or-excl -> . EXCLAMATION
-    (171) base-expr -> . literal
-    (172) base-expr -> . func-call
-    (173) base-expr -> . var-name
-    (174) base-expr -> . LPAREN expr RPAREN
-    (175) base-expr -> . -constructor
-    (176) base-expr -> . array-constructor
-    (203) literal -> . STR_LITERAL
-    (204) literal -> . MUL_STR_LITERAL
-    (205) literal -> . INT
-    (206) literal -> . float-literal
-    (207) literal -> . bool-literal
-    (177) func-call -> . ID LPAREN func-call-arg-list RPAREN
-    (227) var-name -> . ID
-    (184) -constructor -> . LPAREN expr COMMA expr comma-expr-star RPAREN
-    (187) array-constructor -> . array-list-constructor
-    (188) array-constructor -> . array-range-constructor
-    (189) array-constructor -> . array-kv-constructor
-    (208) float-literal -> . DOUBLE
-    (209) float-literal -> . INF
-    (210) float-literal -> . NAN
-    (211) bool-literal -> . E_TRUE
-    (212) bool-literal -> . E_FALSE
-    (190) array-list-constructor -> . LBRACKET opt-expr-list RBRACKET
-    (193) array-range-constructor -> . LBRACKET expr COLON expr opt-coloned-expr RBRACKET
-    (196) array-kv-constructor -> . LBRACE opt-array-constructor RBRACE
-
-    MINUS           shift and go to state 127
-    EXCLAMATION     shift and go to state 128
-    LPAREN          shift and go to state 132
-    STR_LITERAL     shift and go to state 135
-    MUL_STR_LITERAL shift and go to state 136
-    INT             shift and go to state 137
-    ID              shift and go to state 140
-    DOUBLE          shift and go to state 144
-    INF             shift and go to state 145
-    NAN             shift and go to state 146
-    E_TRUE          shift and go to state 147
-    E_FALSE         shift and go to state 148
-    LBRACKET        shift and go to state 115
-    LBRACE          shift and go to state 149
-
-    expr                           shift and go to state 388
-    or-expr                        shift and go to state 117
-    and-expr                       shift and go to state 118
-    eq-expr                        shift and go to state 119
-    cmp-expr                       shift and go to state 120
-    add-expr                       shift and go to state 121
-    mult-expr                      shift and go to state 122
-    unary-expr                     shift and go to state 123
-    postfix-expr                   shift and go to state 124
-    minus-or-excl                  shift and go to state 125
-    base-expr                      shift and go to state 126
-    literal                        shift and go to state 129
-    func-call                      shift and go to state 130
-    var-name                       shift and go to state 131
-    -constructor                   shift and go to state 133
-    array-constructor              shift and go to state 134
-    float-literal                  shift and go to state 138
-    bool-literal                   shift and go to state 139
-    array-list-constructor         shift and go to state 141
-    array-range-constructor        shift and go to state 142
-    array-kv-constructor           shift and go to state 143
-
-state 365
-
-    (193) array-range-constructor -> LBRACKET expr COLON expr opt-coloned-expr . RBRACKET
-
-    RBRACKET        shift and go to state 389
-
-
 state 366
 
-    (195) opt-coloned-expr -> empty .
-
-    RBRACKET        reduce using rule 195 (opt-coloned-expr -> empty .)
-
-
-state 367
-
-    (185) comma-expr-star -> COMMA . expr comma-expr-star
+    (194) opt-coloned-expr -> COLON . expr
     (134) expr -> . or-expr
     (135) or-expr -> . and-expr
     (136) or-expr -> . or-expr LOG_OR and-expr
@@ -12584,49 +12508,148 @@ state 367
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
+state 367
+
+    (193) array-range-constructor -> LBRACKET expr COLON expr opt-coloned-expr . RBRACKET
+
+    RBRACKET        shift and go to state 391
+
+
 state 368
 
-    (184) -constructor -> LPAREN expr COMMA expr comma-expr-star . RPAREN
+    (195) opt-coloned-expr -> empty .
 
-    RPAREN          shift and go to state 391
+    RBRACKET        reduce using rule 195 (opt-coloned-expr -> empty .)
 
 
 state 369
+
+    (185) comma-expr-star -> COMMA . expr comma-expr-star
+    (134) expr -> . or-expr
+    (135) or-expr -> . and-expr
+    (136) or-expr -> . or-expr LOG_OR and-expr
+    (137) and-expr -> . eq-expr
+    (138) and-expr -> . and-expr LOG_AND eq-expr
+    (139) eq-expr -> . cmp-expr
+    (140) eq-expr -> . eq-expr eq-or-not-eq eq-expr
+    (143) cmp-expr -> . add-expr
+    (144) cmp-expr -> . cmp-expr cmp-sign add-expr
+    (150) add-expr -> . mult-expr
+    (151) add-expr -> . add-expr add-sign mult-expr
+    (154) mult-expr -> . unary-expr
+    (155) mult-expr -> . mult-expr mult-sign unary-expr
+    (161) unary-expr -> . postfix-expr
+    (162) unary-expr -> . minus-or-excl postfix-expr
+    (165) postfix-expr -> . base-expr
+    (166) postfix-expr -> . postfix-expr array-or-struct
+    (163) minus-or-excl -> . MINUS
+    (164) minus-or-excl -> . EXCLAMATION
+    (171) base-expr -> . literal
+    (172) base-expr -> . func-call
+    (173) base-expr -> . var-name
+    (174) base-expr -> . LPAREN expr RPAREN
+    (175) base-expr -> . -constructor
+    (176) base-expr -> . array-constructor
+    (203) literal -> . STR_LITERAL
+    (204) literal -> . MUL_STR_LITERAL
+    (205) literal -> . INT
+    (206) literal -> . float-literal
+    (207) literal -> . bool-literal
+    (177) func-call -> . ID LPAREN func-call-arg-list RPAREN
+    (227) var-name -> . ID
+    (184) -constructor -> . LPAREN expr COMMA expr comma-expr-star RPAREN
+    (187) array-constructor -> . array-list-constructor
+    (188) array-constructor -> . array-range-constructor
+    (189) array-constructor -> . array-kv-constructor
+    (208) float-literal -> . DOUBLE
+    (209) float-literal -> . INF
+    (210) float-literal -> . NAN
+    (211) bool-literal -> . E_TRUE
+    (212) bool-literal -> . E_FALSE
+    (190) array-list-constructor -> . LBRACKET opt-expr-list RBRACKET
+    (193) array-range-constructor -> . LBRACKET expr COLON expr opt-coloned-expr RBRACKET
+    (196) array-kv-constructor -> . LBRACE opt-array-constructor RBRACE
+
+    MINUS           shift and go to state 127
+    EXCLAMATION     shift and go to state 128
+    LPAREN          shift and go to state 132
+    STR_LITERAL     shift and go to state 135
+    MUL_STR_LITERAL shift and go to state 136
+    INT             shift and go to state 137
+    ID              shift and go to state 140
+    DOUBLE          shift and go to state 144
+    INF             shift and go to state 145
+    NAN             shift and go to state 146
+    E_TRUE          shift and go to state 147
+    E_FALSE         shift and go to state 148
+    LBRACKET        shift and go to state 115
+    LBRACE          shift and go to state 149
+
+    expr                           shift and go to state 392
+    or-expr                        shift and go to state 117
+    and-expr                       shift and go to state 118
+    eq-expr                        shift and go to state 119
+    cmp-expr                       shift and go to state 120
+    add-expr                       shift and go to state 121
+    mult-expr                      shift and go to state 122
+    unary-expr                     shift and go to state 123
+    postfix-expr                   shift and go to state 124
+    minus-or-excl                  shift and go to state 125
+    base-expr                      shift and go to state 126
+    literal                        shift and go to state 129
+    func-call                      shift and go to state 130
+    var-name                       shift and go to state 131
+    -constructor                   shift and go to state 133
+    array-constructor              shift and go to state 134
+    float-literal                  shift and go to state 138
+    bool-literal                   shift and go to state 139
+    array-list-constructor         shift and go to state 141
+    array-range-constructor        shift and go to state 142
+    array-kv-constructor           shift and go to state 143
+
+state 370
+
+    (184) -constructor -> LPAREN expr COMMA expr comma-expr-star . RPAREN
+
+    RPAREN          shift and go to state 393
+
+
+state 371
 
     (186) comma-expr-star -> empty .
 
     RPAREN          reduce using rule 186 (comma-expr-star -> empty .)
 
 
-state 370
+state 372
 
     (199) comma-array-kv-elem-star -> COMMA array-kv-elem comma-array-kv-elem-star .
 
     RBRACE          reduce using rule 199 (comma-array-kv-elem-star -> COMMA array-kv-elem comma-array-kv-elem-star .)
 
 
-state 371
+state 373
 
     (109) switch-stmt -> S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-default . RBRACE
 
-    RBRACE          shift and go to state 392
+    RBRACE          shift and go to state 394
 
 
-state 372
+state 374
 
     (110) opt-default -> S_DEFAULT .
 
     RBRACE          reduce using rule 110 (opt-default -> S_DEFAULT .)
 
 
-state 373
+state 375
 
     (111) opt-default -> empty .
 
     RBRACE          reduce using rule 111 (opt-default -> empty .)
 
 
-state 374
+state 376
 
     (112) case-star -> case case-star .
 
@@ -12634,32 +12657,32 @@ state 374
     RBRACE          reduce using rule 112 (case-star -> case case-star .)
 
 
-state 375
+state 377
 
     (114) case -> S_CASE INT . COLON translation-unit
 
-    COLON           shift and go to state 393
+    COLON           shift and go to state 395
 
 
-state 376
+state 378
 
     (122) for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-update-list . RPAREN block
 
-    RPAREN          shift and go to state 394
+    RPAREN          shift and go to state 396
 
 
-state 377
+state 379
 
     (129) for-update-list -> for-assignment . for-assignment-star
     (130) for-assignment-star -> . COMMA for-assignment for-assignment-star
     (131) for-assignment-star -> .
 
-    COMMA           shift and go to state 396
+    COMMA           shift and go to state 398
     RPAREN          reduce using rule 131 (for-assignment-star -> .)
 
-    for-assignment-star            shift and go to state 395
+    for-assignment-star            shift and go to state 397
 
-state 378
+state 380
 
     (128) for-init -> type-prefix var-name type-suffix ASSIGN expr .
 
@@ -12667,7 +12690,7 @@ state 378
     SEMICOLON       reduce using rule 128 (for-init -> type-prefix var-name type-suffix ASSIGN expr .)
 
 
-state 379
+state 381
 
     (133) iterate-loop -> S_ITERATE var-name block S_UNTIL LPAREN expr RPAREN .
 
@@ -12705,7 +12728,7 @@ state 379
     S_DEFAULT       reduce using rule 133 (iterate-loop -> S_ITERATE var-name block S_UNTIL LPAREN expr RPAREN .)
 
 
-state 380
+state 382
 
     (68) empty-or-more-literals -> LBRACKET single-or-multiple-literal RBRACKET .
 
@@ -12743,28 +12766,28 @@ state 380
     S_DEFAULT       reduce using rule 68 (empty-or-more-literals -> LBRACKET single-or-multiple-literal RBRACKET .)
 
 
-state 381
+state 383
 
     (54) app-body -> app-arg-expr app-arg-expr-star app-out-star empty-or-semicolon .
 
     RBRACE          reduce using rule 54 (app-body -> app-arg-expr app-arg-expr-star app-out-star empty-or-semicolon .)
 
 
-state 382
+state 384
 
     (55) empty-or-semicolon -> SEMICOLON .
 
     RBRACE          reduce using rule 55 (empty-or-semicolon -> SEMICOLON .)
 
 
-state 383
+state 385
 
     (56) empty-or-semicolon -> empty .
 
     RBRACE          reduce using rule 56 (empty-or-semicolon -> empty .)
 
 
-state 384
+state 386
 
     (57) app-out-star -> std-in-out-err ASSIGN . expr app-out-star
     (134) expr -> . or-expr
@@ -12827,7 +12850,7 @@ state 384
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 397
+    expr                           shift and go to state 399
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -12849,7 +12872,7 @@ state 384
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 385
+state 387
 
     (47) formal-arg -> type-prefix empty-or-range var-name type-suffix empty-or-ass-expr .
 
@@ -12857,14 +12880,14 @@ state 385
     RPAREN          reduce using rule 47 (formal-arg -> type-prefix empty-or-range var-name type-suffix empty-or-ass-expr .)
 
 
-state 386
+state 388
 
     (50) empty-or-ass-expr -> formal-arg-list . ASSIGN expr
 
-    ASSIGN          shift and go to state 398
+    ASSIGN          shift and go to state 400
 
 
-state 387
+state 389
 
     (51) empty-or-ass-expr -> empty .
     (42) formal-arg-list -> empty .
@@ -12874,14 +12897,14 @@ state 387
     ASSIGN          reduce using rule 42 (formal-arg-list -> empty .)
 
 
-state 388
+state 390
 
     (194) opt-coloned-expr -> COLON expr .
 
     RBRACKET        reduce using rule 194 (opt-coloned-expr -> COLON expr .)
 
 
-state 389
+state 391
 
     (193) array-range-constructor -> LBRACKET expr COLON expr opt-coloned-expr RBRACKET .
 
@@ -12952,20 +12975,20 @@ state 389
     E_FALSE         reduce using rule 193 (array-range-constructor -> LBRACKET expr COLON expr opt-coloned-expr RBRACKET .)
 
 
-state 390
+state 392
 
     (185) comma-expr-star -> COMMA expr . comma-expr-star
     (185) comma-expr-star -> . COMMA expr comma-expr-star
     (186) comma-expr-star -> . empty
     (76) empty -> .
 
-    COMMA           shift and go to state 367
+    COMMA           shift and go to state 369
     RPAREN          reduce using rule 76 (empty -> .)
 
-    comma-expr-star                shift and go to state 399
-    empty                          shift and go to state 369
+    comma-expr-star                shift and go to state 401
+    empty                          shift and go to state 371
 
-state 391
+state 393
 
     (184) -constructor -> LPAREN expr COMMA expr comma-expr-star RPAREN .
 
@@ -13027,7 +13050,7 @@ state 391
     E_STDERR        reduce using rule 184 (-constructor -> LPAREN expr COMMA expr comma-expr-star RPAREN .)
 
 
-state 392
+state 394
 
     (109) switch-stmt -> S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-default RBRACE .
 
@@ -13065,7 +13088,7 @@ state 392
     S_DEFAULT       reduce using rule 109 (switch-stmt -> S_SWITCH LPAREN expr RPAREN LBRACE case-star opt-default RBRACE .)
 
 
-state 393
+state 395
 
     (114) case -> S_CASE INT COLON . translation-unit
     (1) translation-unit -> . statement-star
@@ -13234,7 +13257,7 @@ state 393
   ! collection_DICT [ reduce using rule 76 (empty -> .) ]
   ! LESS            [ reduce using rule 76 (empty -> .) ]
 
-    translation-unit               shift and go to state 400
+    translation-unit               shift and go to state 402
     statement-star                 shift and go to state 2
     statement                      shift and go to state 3
     empty                          shift and go to state 4
@@ -13270,23 +13293,23 @@ state 393
     type-params                    shift and go to state 51
     lval-expr                      shift and go to state 63
 
-state 394
+state 396
 
     (122) for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-update-list RPAREN . block
     (90) block -> . LBRACE translation-unit RBRACE
 
     LBRACE          shift and go to state 32
 
-    block                          shift and go to state 401
+    block                          shift and go to state 403
 
-state 395
+state 397
 
     (129) for-update-list -> for-assignment for-assignment-star .
 
     RPAREN          reduce using rule 129 (for-update-list -> for-assignment for-assignment-star .)
 
 
-state 396
+state 398
 
     (130) for-assignment-star -> COMMA . for-assignment for-assignment-star
     (132) for-assignment -> . var-name ASSIGN expr
@@ -13294,10 +13317,10 @@ state 396
 
     ID              shift and go to state 82
 
-    for-assignment                 shift and go to state 402
+    for-assignment                 shift and go to state 404
     var-name                       shift and go to state 176
 
-state 397
+state 399
 
     (57) app-out-star -> std-in-out-err ASSIGN expr . app-out-star
     (57) app-out-star -> . std-in-out-err ASSIGN expr app-out-star
@@ -13308,14 +13331,14 @@ state 397
 
     SEMICOLON       reduce using rule 58 (app-out-star -> .)
     RBRACE          reduce using rule 58 (app-out-star -> .)
-    E_STDIN         shift and go to state 357
-    E_STDOUT        shift and go to state 358
-    E_STDERR        shift and go to state 359
+    E_STDIN         shift and go to state 359
+    E_STDOUT        shift and go to state 360
+    E_STDERR        shift and go to state 361
 
-    std-in-out-err                 shift and go to state 356
-    app-out-star                   shift and go to state 403
+    std-in-out-err                 shift and go to state 358
+    app-out-star                   shift and go to state 405
 
-state 398
+state 400
 
     (50) empty-or-ass-expr -> formal-arg-list ASSIGN . expr
     (134) expr -> . or-expr
@@ -13378,7 +13401,7 @@ state 398
     LBRACKET        shift and go to state 115
     LBRACE          shift and go to state 149
 
-    expr                           shift and go to state 404
+    expr                           shift and go to state 406
     or-expr                        shift and go to state 117
     and-expr                       shift and go to state 118
     eq-expr                        shift and go to state 119
@@ -13400,14 +13423,14 @@ state 398
     array-range-constructor        shift and go to state 142
     array-kv-constructor           shift and go to state 143
 
-state 399
+state 401
 
     (185) comma-expr-star -> COMMA expr comma-expr-star .
 
     RPAREN          reduce using rule 185 (comma-expr-star -> COMMA expr comma-expr-star .)
 
 
-state 400
+state 402
 
     (114) case -> S_CASE INT COLON translation-unit .
 
@@ -13416,7 +13439,7 @@ state 400
     RBRACE          reduce using rule 114 (case -> S_CASE INT COLON translation-unit .)
 
 
-state 401
+state 403
 
     (122) for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-update-list RPAREN block .
 
@@ -13454,18 +13477,18 @@ state 401
     S_DEFAULT       reduce using rule 122 (for-loop -> S_FOR LPAREN for-init-list SEMICOLON expr SEMICOLON for-update-list RPAREN block .)
 
 
-state 402
+state 404
 
     (130) for-assignment-star -> COMMA for-assignment . for-assignment-star
     (130) for-assignment-star -> . COMMA for-assignment for-assignment-star
     (131) for-assignment-star -> .
 
-    COMMA           shift and go to state 396
+    COMMA           shift and go to state 398
     RPAREN          reduce using rule 131 (for-assignment-star -> .)
 
-    for-assignment-star            shift and go to state 405
+    for-assignment-star            shift and go to state 407
 
-state 403
+state 405
 
     (57) app-out-star -> std-in-out-err ASSIGN expr app-out-star .
 
@@ -13473,7 +13496,7 @@ state 403
     RBRACE          reduce using rule 57 (app-out-star -> std-in-out-err ASSIGN expr app-out-star .)
 
 
-state 404
+state 406
 
     (50) empty-or-ass-expr -> formal-arg-list ASSIGN expr .
 
@@ -13481,7 +13504,7 @@ state 404
     RPAREN          reduce using rule 50 (empty-or-ass-expr -> formal-arg-list ASSIGN expr .)
 
 
-state 405
+state 407
 
     (130) for-assignment-star -> COMMA for-assignment for-assignment-star .
 
@@ -13609,37 +13632,37 @@ WARNING: shift/reduce conflict for EQUAL in state 120 resolved as shift
 WARNING: shift/reduce conflict for GREATER in state 120 resolved as shift
 WARNING: shift/reduce conflict for LPAREN in state 140 resolved as shift
 WARNING: shift/reduce conflict for LESS in state 178 resolved as shift
-WARNING: shift/reduce conflict for EQUAL in state 291 resolved as shift
-WARNING: shift/reduce conflict for NOT_EQUAL in state 291 resolved as shift
-WARNING: shift/reduce conflict for S_ELSE in state 305 resolved as shift
-WARNING: shift/reduce conflict for SEMICOLON in state 393 resolved as shift
-WARNING: shift/reduce conflict for C_GLOBAL in state 393 resolved as shift
-WARNING: shift/reduce conflict for D_IMPORT in state 393 resolved as shift
-WARNING: shift/reduce conflict for C_PRAGMA in state 393 resolved as shift
-WARNING: shift/reduce conflict for LBRACE in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_IF in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_SWITCH in state 393 resolved as shift
-WARNING: shift/reduce conflict for E_WAIT in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_FOREACH in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_FOR in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_WHILE in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_ITERATE in state 393 resolved as shift
-WARNING: shift/reduce conflict for S_ELSE in state 393 resolved as shift
-WARNING: shift/reduce conflict for ID in state 393 resolved as shift
-WARNING: shift/reduce conflict for C_APP in state 393 resolved as shift
-WARNING: shift/reduce conflict for LPAREN in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_INT in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_DOUBLE in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_FLOAT in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_VOID in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_UINT in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_BOOL in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_CHARACTER in state 393 resolved as shift
-WARNING: shift/reduce conflict for class_String in state 393 resolved as shift
-WARNING: shift/reduce conflict for collection_SET in state 393 resolved as shift
-WARNING: shift/reduce conflict for collection_ARRAY in state 393 resolved as shift
-WARNING: shift/reduce conflict for collection_DICT in state 393 resolved as shift
-WARNING: shift/reduce conflict for LESS in state 393 resolved as shift
+WARNING: shift/reduce conflict for EQUAL in state 292 resolved as shift
+WARNING: shift/reduce conflict for NOT_EQUAL in state 292 resolved as shift
+WARNING: shift/reduce conflict for S_ELSE in state 306 resolved as shift
+WARNING: shift/reduce conflict for SEMICOLON in state 395 resolved as shift
+WARNING: shift/reduce conflict for C_GLOBAL in state 395 resolved as shift
+WARNING: shift/reduce conflict for D_IMPORT in state 395 resolved as shift
+WARNING: shift/reduce conflict for C_PRAGMA in state 395 resolved as shift
+WARNING: shift/reduce conflict for LBRACE in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_IF in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_SWITCH in state 395 resolved as shift
+WARNING: shift/reduce conflict for E_WAIT in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_FOREACH in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_FOR in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_WHILE in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_ITERATE in state 395 resolved as shift
+WARNING: shift/reduce conflict for S_ELSE in state 395 resolved as shift
+WARNING: shift/reduce conflict for ID in state 395 resolved as shift
+WARNING: shift/reduce conflict for C_APP in state 395 resolved as shift
+WARNING: shift/reduce conflict for LPAREN in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_INT in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_DOUBLE in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_FLOAT in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_VOID in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_UINT in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_BOOL in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_CHARACTER in state 395 resolved as shift
+WARNING: shift/reduce conflict for class_String in state 395 resolved as shift
+WARNING: shift/reduce conflict for collection_SET in state 395 resolved as shift
+WARNING: shift/reduce conflict for collection_ARRAY in state 395 resolved as shift
+WARNING: shift/reduce conflict for collection_DICT in state 395 resolved as shift
+WARNING: shift/reduce conflict for LESS in state 395 resolved as shift
 WARNING: reduce/reduce conflict in state 4 resolved using rule (statement-star -> empty)
 WARNING: rejected rule (opt-else-block -> empty) in state 4
 WARNING: reduce/reduce conflict in state 4 resolved using rule (type-params -> empty)
@@ -13656,5 +13679,5 @@ WARNING: reduce/reduce conflict in state 28 resolved using rule (type-name -> ID
 WARNING: rejected rule (var-name -> ID) in state 28
 WARNING: reduce/reduce conflict in state 183 resolved using rule (type-params -> empty)
 WARNING: rejected rule (opt-else-block -> empty) in state 183
-WARNING: reduce/reduce conflict in state 277 resolved using rule (empty-or-arg-list -> empty)
-WARNING: rejected rule (formal-arg-list -> empty) in state 277
+WARNING: reduce/reduce conflict in state 278 resolved using rule (empty-or-arg-list -> empty)
+WARNING: rejected rule (formal-arg-list -> empty) in state 278

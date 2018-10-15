@@ -15,7 +15,7 @@ def p_translation_unit(p):
 def p_statement_star(p):
     """
     statement-star  : statement statement-star
-	| empty
+                    | empty
     """
     try:
         p[0] = (p[1], (p[2]))
@@ -439,7 +439,7 @@ def p_if_stmt(p):
     """
     if-stmt  :  S_IF LPAREN expr RPAREN block opt-else-block
     """
-    p[0] = ('IF', p[3], p[4], (p[5]))
+    p[0] = ('IF', p[3], p[4], p[5])
 
 def p_opt_else_block(p):
     """
@@ -467,7 +467,7 @@ def p_opt_default(p):
 def p_case_star(p):
     """
     case-star   : case case-star
-	|
+	| empty
     """
     try:
         p[0] = ('CASES', p[1], (p[2]))
@@ -538,7 +538,7 @@ def p_for_init_list(p):
 def p_for_init_star(p):
     """
     for-init-star   : COMMA for-init for-init-star
-	|
+	| empty
     """
     try:
         p[0] = (p[2], (p[3]))
